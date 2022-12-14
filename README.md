@@ -1,73 +1,62 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+아래의 템플릿을 참고하여 README.md를 작성하세요.
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+<hr />
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+# (서비스 명)
+- 서비스 명을 위 괄호 부분에 작성하세요.
+- 서비스의 한 줄 소개를 작성하세요.
 
-## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 서비스 구성 안내
 
-## Installation
+## 1. 서비스 소개
 
-```bash
-$ npm install
-```
+- 기술 스택 (Bulma css, node, mongodb 등)
+- 웹서비스에 대한 자세한 개요 등
 
-## Running the app
 
-```bash
-# development
-$ npm run start
+## 2. 서비스 주요 기능 설명
 
-# watch mode
-$ npm run start:dev
+**웹서비스의 유용성, 편의성 및 시각화의 실용성에 대한 설명**
+  - 주요 기능 (주된 활용성) 및 서브 기능 소개
+  - 프로젝트만의 차별점, 기대 효과
 
-# production mode
-$ npm run start:prod
-```
+## 3. 서비스 구성도
+  - 서비스 구조도 그림 (사용한 기술 스택)
+  - 와이어프레임 링크 (예상 웹 화면 UI) e.g) figma 사용
+  - API 명세를 문서화한 링크
 
-## Test
+## 4. 프로젝트 팀원 역할 분담
+| 이름 | 담당 업무 |
+| ------ | ------ |
+| 멤버1 | 팀장/프론트엔드 개발 |
+| 멤버2 | 백엔드 개발 |
 
-```bash
-# unit tests
-$ npm run test
+**멤버별 responsibility**
 
-# e2e tests
-$ npm run test:e2e
+1. 멤버 1: 팀장/프론트엔드 담당
 
-# test coverage
-$ npm run test:cov
-```
+- 기획 단계: 구체적인 설계와 지표에 따른 프로젝트 제안서 작성
+- 개발 단계: 팀원간의 일정 등 조율 + 프론트 or 백엔드 개발
+- 수정 단계: 기획, 스크럼 진행, 코치님 피드백 반영해서 수정, 발표 준비
 
-## Support
+2. 멤버 2: 백엔드 담당
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+- 기획 단계: 큰 주제에서 문제 해결 아이디어 도출, 와이어프레임 작성
+- 개발 단계: 와이어프레임을 기반으로 API 완성
+- 수정 단계: 피드백 반영해서 백엔드 설계 수정
 
-## Stay in touch
+## 5. 실행 방법
+- 백엔드 (예시):
+  ```bash
+  1. mongodb 실행
+  2. yarn start (혹은 npm start)
+  ```
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## 6. 버전
+  - 프로젝트의 버전 기입 (예: 1.0.0)
 
-## License
-
-Nest is [MIT licensed](LICENSE).
+## 7. FAQ
+  - 자주 받는 질문 정리
+  - 예시) 이 서비스는 어떻게 실행하면 되나요?
+    - git clone을 하신 후 아래 커맨드를 입력하시면 됩니다. ~~~
