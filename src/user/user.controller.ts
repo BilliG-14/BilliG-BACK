@@ -11,8 +11,9 @@ export class UserController {
     return this.userService.get();
   }
 
-  @Post()
-  createUser(@Body() userInfo: CreateUserDTO) {
-    return this.userService.create(userInfo);
+  @Post('register')
+  async createUser(@Body() userInfo: CreateUserDTO) {
+    const createdUser = await this.userService.create(userInfo);
+    return createdUser;
   }
 }
