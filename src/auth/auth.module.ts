@@ -11,7 +11,7 @@ import { UserModule } from 'src/user/user.module';
     UserModule,
     PassportModule,
     JwtModule.register({
-      secret: 'secretkey',
+      secret: process.env.JWT_SECRETKEY ?? 'secretkey',
     }),
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],

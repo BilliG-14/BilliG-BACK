@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 import { CreateUserDTO } from 'src/user/dto/createUser.dto';
 
 import { UserService } from 'src/user/user.service';
@@ -19,15 +19,15 @@ export class AuthService {
     const isPasswordMatching = await bcrypt.compare(password, user.password);
 
     if (isPasswordMatching) {
-      const { password, ...result } = user;
+      const { password, ...result } = user.toObject();
       return result;
     }
     return null;
   }
 
   public createToken(payload: TokenPayload) {
-    const expireAccess = process.env.JWT_EXPIRATION_TIME ?? '2h';
-    const expireRefresh = process.env.JWT_EXPIRATION_TIME ?? '2h';
+    const expireAccess = process.env.JWT_EXPIRATION_TIME_ACCESS ?? '2h';
+    const expireRefresh = process.env.JWT_EXPIRATION_TIME_REFRESH ?? '14d';
     const access = this.jwtService.sign(payload, {
       expiresIn: expireAccess,
     });
@@ -49,7 +49,7 @@ export class AuthService {
     };
 
     const user = await this.userService.create(userInfoHashed);
-    const { password, ...result } = user;
+    const { password, ...result } = user.toObject();
     return result;
   }
 }
