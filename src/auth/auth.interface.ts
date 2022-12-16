@@ -1,3 +1,5 @@
+import { Schema } from 'mongoose';
+
 export interface TokenPayload {
-  email: string;
+  id: Schema.Types.ObjectId;
 }

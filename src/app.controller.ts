@@ -9,8 +9,8 @@ import {
 } from '@nestjs/common';
 import { AppService } from './app.service';
 import { AuthService } from './auth/auth.service';
+import { RegisterUserDTO } from './auth/dto/registerUser.dto';
 import { LocalAuthGuard } from './auth/guard/local-auth.guard';
-import { CreateUserDTO } from './user/dto/createUser.dto';
 
 @Controller()
 export class AppController {
@@ -25,7 +25,7 @@ export class AppController {
   }
 
   @Post('register')
-  async registerUser(@Body() userInfo: CreateUserDTO) {
+  async registerUser(@Body() userInfo: RegisterUserDTO) {
     const createdUser = await this.authService.creatUserHashed(userInfo);
     return createdUser;
   }
@@ -35,7 +35,7 @@ export class AppController {
   async loginUser(@Req() requestWithUser, @Res() response) {
     const { user } = requestWithUser;
     const { access, refresh } = this.authService.createToken({
-      email: user.email,
+      id: user._id,
     });
     response.setHeader('Set-Cookie', refresh);
     return response.send({ user, token: access });

@@ -2,7 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { CreateUserDTO } from 'src/user/dto/createUser.dto';
+import { RegisterUserDTO } from './dto/registerUser.dto';
 
 import { UserService } from 'src/user/user.service';
 import { TokenPayload } from './auth.interface';
@@ -41,7 +41,7 @@ export class AuthService {
     };
   }
 
-  public async creatUserHashed(userInfo: CreateUserDTO) {
+  public async creatUserHashed(userInfo: RegisterUserDTO) {
     const passwordHashed = await bcrypt.hash(userInfo.password, 10);
     const userInfoHashed = {
       ...userInfo,
