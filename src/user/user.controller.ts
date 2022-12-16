@@ -8,7 +8,6 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { Schema } from 'mongoose';
 import JwtAuthGuard from 'src/auth/guard/jwt-auth.guard';
 import { UpdateUserDTO } from './dto/updateUser.dto';
 import { UserService } from './user.service';
@@ -26,15 +25,13 @@ export class UserController {
 
   @Get(':id')
   async getUser(@Param('id') id: string) {
-    const user = await this.userService.getUserById(
-      new Schema.Types.ObjectId(id),
-    );
+    const user = await this.userService.getUserById(id);
     return user;
   }
 
   @Patch()
   async updateUser(@Req() request, @Body() userInfo: UpdateUserDTO) {
-    const user = await this.userService.update(request.user.email, userInfo);
+    const user = await this.userService.update(request.user._id, userInfo);
     return user;
   }
 

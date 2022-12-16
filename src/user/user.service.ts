@@ -2,7 +2,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Schema } from 'mongoose';
-import { RegisterUserDTO } from 'src/auth/dto/registerUser.dto';
 import { UpdateUserDTO } from './dto/updateUser.dto';
 import { User, UserDocument } from './schemas/user.schema';
 
@@ -10,8 +9,8 @@ import { User, UserDocument } from './schemas/user.schema';
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  async getUserById(id: Schema.Types.ObjectId) {
-    const user = await this.userModel.findOne({ _id: id }, { password: false });
+  async getUserById(_id: string) {
+    const user = await this.userModel.findOne({ _id }, { password: false });
     if (!user) {
       throw new HttpException(
         '사용자가 존재하지 않습니다',
@@ -39,14 +38,14 @@ export class UserService {
     return users;
   }
 
-  async create(userInfo: RegisterUserDTO) {
+  async create(userInfo: User) {
     const createdUser = new this.userModel(userInfo);
     return createdUser.save();
   }
 
-  async update(email: string, userInfo: UpdateUserDTO) {
+  async update(_id: string, userInfo: UpdateUserDTO) {
     const updatedUser = await this.userModel.findOneAndUpdate(
-      { email },
+      { _id },
       userInfo,
       {
         returnOriginal: false,
@@ -57,7 +56,7 @@ export class UserService {
     return result;
   }
 
-  async deleteUserById(id: Schema.Types.ObjectId) {
-    await this.userModel.deleteOne({ _id: id });
+  async deleteUserById(_id: string) {
+    await this.userModel.deleteOne({ _id });
   }
 }

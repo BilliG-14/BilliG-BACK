@@ -38,6 +38,6 @@ export class AppController {
       id: user._id,
     });
     response.setHeader('Set-Cookie', refresh);
-    return response.send({ user, token: access });
+    return response.send({ ...user, token: access });
   }
 }
