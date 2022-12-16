@@ -2,8 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { CreateProductDTO } from './dto/createProduct.dto';
-import { productDTO } from './dto/product.dto';
-import { updateProductDTO } from './dto/updateProduct.dto';
+import { UpdateProductDTO } from './dto/updateProduct.dto';
 import { postType } from './types/state.type';
 import { ProductModule } from './product.module';
 import {
@@ -19,6 +18,10 @@ export class ProductRepository {
     private readonly productModel: Model<ProductDocument>,
   ) {}
 
+  async findUserAllProducts(user: string) {
+    return this.productModel.find({ author: user });
+  }
+
   // 게시물 대여타입 별로 불러오기
   async findByTypeOfPost(postType: postType) {
     const result = await this.productModel.find({ postType: postType });
@@ -31,30 +34,32 @@ export class ProductRepository {
     return result;
   }
 
-  async findByBorrower(user: string) {
-    return await this.productModel.find({ borrower: user });
-  }
-
+  // 빌려주는 사람으로 찾기
   async findByLender(user: string) {
     return await this.productModel.find({ lender: user });
   }
 
+  // 빌리는 사람으로 찾기
+  async findByBorrower(user: string) {
+    return await this.productModel.find({ borrower: user });
+  }
+
   // 게시물 ID로 불러오기
-  async findById(id: string) {
-    const result = await this.productModel.find({ id: id });
+  async findById(productId: string) {
+    const result = await this.productModel.find({ _id: productId });
     return result;
   }
 
   // 게시물 생성하기
-  async createProduct(newProduct: productDTO) {
+  async createProduct(newProduct: CreateProductDTO) {
     const result = await this.productModel.create(newProduct);
     return result;
   }
 
   // 게시물 수정하기
-  async updateProduct(productId: string, editProduct: updateProductDTO) {
+  async updateProduct(productId: string, editProduct: UpdateProductDTO) {
     const result = await this.productModel.findOneAndUpdate(
-      { productId },
+      { _id: productId },
       editProduct,
     );
     return result;
@@ -62,7 +67,7 @@ export class ProductRepository {
 
   // 게시물 삭제하기
   async deleteProduct(productId: string) {
-    const result = await this.productModel.findOneAndDelete({ productId });
+    const result = await this.productModel.findOneAndDelete({ _id: productId });
     return result;
   }
 }

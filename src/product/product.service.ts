@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateProductDTO } from './dto/createProduct.dto';
-import { updateProductDTO } from './dto/updateProduct.dto';
+import { UpdateProductDTO } from './dto/updateProduct.dto';
 import { postType } from './types/state.type';
 import { ProductRepository } from './product.repository';
 import { Product, ProductDocument } from './schemas/product.schema';
@@ -10,6 +10,10 @@ import { Product, ProductDocument } from './schemas/product.schema';
 @Injectable()
 export class ProductService {
   constructor(private readonly productRepository: ProductRepository) {}
+
+  async findUserAllProducts(user: string) {
+    return await this.productRepository.findUserAllProducts(user);
+  }
 
   async findByTypeOfPost(typeOfPost: postType) {
     return await this.productRepository.findByTypeOfPost(typeOfPost);
@@ -22,9 +26,9 @@ export class ProductService {
   async findByUser(user: string, typeOfPost: postType) {
     switch (typeOfPost) {
       case postType.lend:
-        return this.productRepository.findByLender(user);
+        return await this.productRepository.findByLender(user);
       case postType.borrow:
-        return this.productRepository.findByBorrower(user);
+        return await this.productRepository.findByBorrower(user);
     }
   }
 
@@ -35,7 +39,7 @@ export class ProductService {
   // 게시물 생성
   async createProduct(createProduct: CreateProductDTO): Promise<Product> {
     const {
-      typeOfPost,
+      postType,
       category,
       author,
       title,
@@ -52,11 +56,8 @@ export class ProductService {
       direct,
     } = createProduct;
 
-    const generateID = Date(); // 게시물 데이터 고유 ID 부여하기 ( 수정 필요 )
-
     const inputProduct = {
-      id: generateID,
-      typeOfPost,
+      postType,
       category,
       author,
       title,
@@ -77,9 +78,9 @@ export class ProductService {
   }
 
   // 게시물 수정
-  async updateProduct(id: string, editproduct: updateProductDTO) {
+  async updateProduct(id: string, editproduct: UpdateProductDTO) {
     const {
-      typeOfPost,
+      postType,
       category,
       author,
       title,
@@ -97,7 +98,7 @@ export class ProductService {
     } = editproduct;
 
     const inputProduct = {
-      ...(typeOfPost && { typeOfPost }),
+      ...(postType && { postType }),
       ...(category && { category }),
       ...(author && { author }),
       ...(title && { title }),

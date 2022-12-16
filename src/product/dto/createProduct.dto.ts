@@ -7,11 +7,11 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { stateOfTransaction } from '../types/state.type';
+import { postType, stateOfTransaction } from '../types/state.type';
 
 export class CreateProductDTO {
-  @IsNumber()
-  typeOfPost: number;
+  @IsOptional()
+  postType: postType;
 
   @IsString()
   category: string;

@@ -21,10 +21,7 @@ export type ProductDocument = HydratedDocument<Product>;
 
 @Schema()
 export class Product {
-  @Prop({ required: true })
-  id: number;
-
-  @Prop({ required: true })
+  @Prop({ required: false })
   postType: postType;
 
   @Prop({ required: true })
@@ -43,10 +40,10 @@ export class Product {
   imgUrl: string[];
 
   // 빌려주는사람, 빌리는사람 은 유저데이터와 populate 시켜야 함
-  @Prop({ required: true })
+  @Prop({ required: false })
   lender: string;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   borrower: string;
 
   @Prop({ required: true })

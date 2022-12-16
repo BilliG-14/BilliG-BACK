@@ -15,7 +15,7 @@ import { MongooseModule } from '@nestjs/mongoose';
     }),
     MongooseModule.forRoot(
       process.env.MONGODB_URI ??
-        'mongodb+srv://fourteen:<1q2w3e4r>@cluster0.hhabnie.mongodb.net/?retryWrites=true&w=majority',
+        'mongodb+srv://fourteen:1q2w3e4r@cluster0.hhabnie.mongodb.net/?retryWrites=true&w=majority',
     ),
   ],
   controllers: [AppController],

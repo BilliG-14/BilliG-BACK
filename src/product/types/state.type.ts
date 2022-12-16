@@ -6,6 +6,6 @@ export enum stateOfTransaction {
 }
 
 export enum postType {
-  borrow,
-  lend,
+  borrow = 'borrow',
+  lend = 'lend',
 }
