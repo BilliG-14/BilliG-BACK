@@ -7,12 +7,14 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
+import { ApiTags, ApiResponse } from '@nestjs/swagger';
 import { AppService } from './app.service';
 import { AuthService } from './auth/auth.service';
 import { RegisterUserDTO } from './auth/dto/registerUser.dto';
 import { LocalAuthGuard } from './auth/guard/local-auth.guard';
 
 @Controller()
+@ApiTags('가입 및 로그인 API')
 export class AppController {
   constructor(
     private readonly appService: AppService,
@@ -25,6 +27,7 @@ export class AppController {
   }
 
   @Post('register')
+  @ApiResponse({ type: RegisterUserDTO })
   async registerUser(@Body() userInfo: RegisterUserDTO) {
     const createdUser = await this.authService.creatUserHashed(userInfo);
     return createdUser;
@@ -32,6 +35,7 @@ export class AppController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
+  // @ApiResponse({ type: { email: String } })
   async loginUser(@Req() requestWithUser, @Res() response) {
     const { user } = requestWithUser;
     const { access, refresh } = this.authService.createToken({
