@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsString } from 'class-validator';
 import { HydratedDocument } from 'mongoose';
-import { stateOfTransaction } from '../entites/state.entity';
+import { postType, stateOfTransaction } from '../types/state.type';
 
 export type ProductDocument = HydratedDocument<Product>;
 
@@ -25,7 +25,7 @@ export class Product {
   id: number;
 
   @Prop({ required: true })
-  typeOfPost: number;
+  postType: postType;
 
   @Prop({ required: true })
   category: string;
@@ -39,9 +39,10 @@ export class Product {
   @Prop({ required: true })
   contents: string;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   imgUrl: string[];
 
+  // 빌려주는사람, 빌리는사람 은 유저데이터와 populate 시켜야 함
   @Prop({ required: true })
   lender: string;
 
@@ -59,6 +60,15 @@ export class Product {
 
   @Prop({ required: true })
   period: string;
+
+  @Prop({ required: true })
+  hashtag: string[];
+
+  @Prop({ required: true })
+  delivery: boolean;
+
+  @Prop({ required: true })
+  direct: boolean;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);

@@ -10,8 +10,10 @@ import {
   Query,
 } from '@nestjs/common';
 import { CreateProductDTO } from './dto/createProduct.dto';
+import { postType } from './types/state.type';
 import { ProductService } from './product.service';
 import { Product } from './schemas/product.schema';
+import { updateProductDTO } from './dto/updateProduct.dto';
 
 @Controller('product')
 export class ProductController {
@@ -37,37 +39,40 @@ export class ProductController {
 
   // product/filter?postType="borrow"
   @Get('filter')
-  getBorrowingProducts(@Query('postType') postType: string) {
-    switch (postType) {
-      case 'borrow':
-      case 'lend':
-    }
+  async getProducts(@Query('postType') postType: postType) {
+    return await this.productService.findByTypeOfPost(postType);
+  }
+
+  @Get('filter')
+  async getProductsByUser(
+    @Query('user') user: string,
+    @Query('postType') postType: postType,
+  ) {
+    return await this.productService.findByUser(user, postType);
   }
 
   // product/12345
   @Get('/:id')
-  getProduct(@Param('id') productId: number) {
-    return 'find one product';
+  async getProduct(@Param('id') productId: string) {
+    return await this.productService.findOneProduct(productId);
   }
 
-  // product/filter?postType="borrow"
+  // product
   @Post()
-  createProduct(
-    @Query('postType') postType: string,
-    @Body() body: CreateProductDTO,
-  ) {
-    switch (postType) {
-      case 'borrow':
-      case 'lend':
-    }
+  async createProduct(@Body() body: CreateProductDTO) {
+    return await this.productService.createProduct(body);
   }
 
-  @Patch()
-  patchBorrowingProduct() {}
+  @Patch('/:id')
+  async patchProduct(
+    @Param('id') productId: string,
+    @Body() body: updateProductDTO,
+  ) {
+    return await this.productService.updateProduct(productId, body);
+  }
 
-  @Patch()
-  patchLendingProduct() {}
-
-  @Delete(':id')
-  deleteProduct() {}
+  @Delete('/:id')
+  async deleteProduct(@Param('id') productId: string) {
+    return this.productService.deleteProduct(productId);
+  }
 }

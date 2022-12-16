@@ -4,3 +4,8 @@ export enum stateOfTransaction {
   recepting = 2,
   returned = 3,
 }
+
+export enum postType {
+  borrow,
+  lend,
+}
