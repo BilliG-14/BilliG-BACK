@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsString } from 'class-validator';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Schema as MongooseSchema, Types } from 'mongoose';
+import { Category } from 'src/category/schemas/category.schema';
 import { postType, stateOfTransaction } from '../types/state.type';
 
 export type ProductDocument = HydratedDocument<Product>;
@@ -24,8 +25,8 @@ export class Product {
   @Prop({ required: false })
   postType: postType;
 
-  @Prop({ required: true })
-  category: string;
+  @Prop({ required: true, type: Types.ObjectId, ref: 'Category' })
+  category: Category;
 
   @Prop({ required: true })
   author: string;

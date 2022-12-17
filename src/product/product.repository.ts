@@ -19,34 +19,42 @@ export class ProductRepository {
   ) {}
 
   async findUserAllProducts(user: string) {
-    return this.productModel.find({ author: user });
+    return this.productModel.find({ author: user }).populate('category');
   }
 
   // 게시물 대여타입 별로 불러오기
   async findByTypeOfPost(postType: postType) {
-    const result = await this.productModel.find({ postType: postType });
+    const result = await this.productModel
+      .find({ postType: postType })
+      .populate('category');
     return result;
   }
 
   // 카테고리 별로 불러오기
   async findByCategory(category: string) {
-    const result = await this.productModel.find({ category: category });
+    const result = await this.productModel
+      .find({ category: category })
+      .populate('category');
     return result;
   }
 
   // 빌려주는 사람으로 찾기
   async findByLender(user: string) {
-    return await this.productModel.find({ lender: user });
+    return await this.productModel.find({ lender: user }).populate('category');
   }
 
   // 빌리는 사람으로 찾기
   async findByBorrower(user: string) {
-    return await this.productModel.find({ borrower: user });
+    return await this.productModel
+      .find({ borrower: user })
+      .populate('category');
   }
 
   // 게시물 ID로 불러오기
   async findById(productId: string) {
-    const result = await this.productModel.find({ _id: productId });
+    const result = await this.productModel
+      .find({ _id: productId })
+      .populate('category');
     return result;
   }
 
