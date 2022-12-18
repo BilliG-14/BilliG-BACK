@@ -49,10 +49,14 @@ export class ProductController {
   }
 
   // 게시물 포스팅하기
+
   @Post()
   async createProduct(@Body() body: CreateProductDTO) {
     return await this.productService.createProduct(body);
   }
+
+  @Post('image')
+  async createProductImg() {}
 
   // 특정 게시물 수정하기
   @Patch('/:id')

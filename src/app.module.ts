@@ -8,6 +8,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CategoryModule } from './category/category.module';
 import { AuthModule } from './auth/auth.module';
 import { NoticeModule } from './notice/notice.module';
+import { ImagesModule } from './images/images.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { NoticeModule } from './notice/notice.module';
         'mongodb+srv://fourteen:1q2w3e4r@cluster0.hhabnie.mongodb.net/?retryWrites=true&w=majority',
     ),
     CategoryModule,
+    ImagesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
