@@ -79,7 +79,7 @@ export class ProductController {
     }
     const result = [];
     const inputData = JSON.parse(body.data);
-    images.forEach((image) => result.push({ filePath: image.location }));
+    images.forEach((image) => result.push(image.location));
 
     return await this.productService.createProduct({
       ...inputData,
