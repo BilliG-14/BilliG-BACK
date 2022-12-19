@@ -18,37 +18,37 @@ export class ProductRepository {
     private readonly productModel: Model<ProductDocument>,
   ) {}
 
-  async findUserAllProducts(user: string) {
-    return this.productModel.find({ author: user }).populate('category');
+  async findProducts(body) {
+    return this.productModel.find({ body });
   }
 
-  // 게시물 대여타입 별로 불러오기
-  async findByTypeOfPost(postType: postType) {
-    const result = await this.productModel
-      .find({ postType: postType })
-      .populate('category');
-    return result;
-  }
+  // // 게시물 대여타입 별로 불러오기
+  // async findByTypeOfPost(postType: postType) {
+  //   const result = await this.productModel
+  //     .find({ postType: postType })
+  //     .populate('category');
+  //   return result;
+  // }
 
-  // 카테고리 별로 불러오기
-  async findByCategory(category: string) {
-    const result = await this.productModel
-      .find({ category: category })
-      .populate('category');
-    return result;
-  }
+  // // 카테고리 별로 불러오기
+  // async findByCategory(category: string) {
+  //   const result = await this.productModel
+  //     .find({ category: category })
+  //     .populate('category');
+  //   return result;
+  // }
 
-  // 빌려주는 사람으로 찾기
-  async findByLender(user: string) {
-    return await this.productModel.find({ lender: user }).populate('category');
-  }
+  // // 빌려주는 사람으로 찾기
+  // async findByLender(user: string) {
+  //   return await this.productModel.find({ lender: user }).populate('category');
+  // }
 
-  // 빌리는 사람으로 찾기
-  async findByBorrower(user: string) {
-    return await this.productModel
-      .find({ borrower: user })
-      .populate('category');
-  }
+  // // 빌리는 사람으로 찾기
+  // async findByBorrower(user: string) {
+  //   return await this.productModel
+  //     .find({ borrower: user })
+  //     .populate('category');
+  // }
 
   // 게시물 ID로 불러오기
   async findById(productId: string) {

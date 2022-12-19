@@ -11,26 +11,27 @@ import { Product, ProductDocument } from './schemas/product.schema';
 export class ProductService {
   constructor(private readonly productRepository: ProductRepository) {}
 
-  async findUserAllProducts(user: string) {
-    return await this.productRepository.findUserAllProducts(user);
+  async findProducts(body) {
+    return await this.productRepository.findProducts(body);
   }
 
-  async findByTypeOfPost(typeOfPost: postType) {
-    return await this.productRepository.findByTypeOfPost(typeOfPost);
-  }
+  // async findByTypeOfPost(typeOfPost: postType) {
+  //   return await this.productRepository.findByTypeOfPost(typeOfPost);
+  // }
 
-  async findByCategory(category: string) {
-    return await this.productRepository.findByCategory(category);
-  }
+  // async findByCategory(category: string) {
+  //   return await this.productRepository.findByCategory(category);
+  // }
 
-  async findByUser(user: string, typeOfPost: postType) {
-    switch (typeOfPost) {
-      case postType.lend:
-        return await this.productRepository.findByLender(user);
-      case postType.borrow:
-        return await this.productRepository.findByBorrower(user);
-    }
-  }
+  // async findProducts(user: string, typeOfPost: postType) {
+
+  //   switch (typeOfPost) {
+  //     case postType.lend:
+  //       return await this.productRepository.findByLender(user);
+  //     case postType.borrow:
+  //       return await this.productRepository.findByBorrower(user);
+  //   }
+  // }
 
   async findOneProduct(id: string) {
     return await this.productRepository.findById(id);

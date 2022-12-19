@@ -21,6 +21,7 @@ import * as multerS3 from 'multer-s3';
 import * as path from 'path';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { S3Client } from '@aws-sdk/client-s3';
+import { FindProductDTO } from './dto/findProduct.dto';
 
 const s3 = new S3Client({
   region: 'ap-northeast-2', // 환경변수로 선언하면 값을 못 읽어오는 문제 있음. 왜 ?????
@@ -34,27 +35,11 @@ const s3 = new S3Client({
 export class ProductController {
   constructor(readonly productService: ProductService) {}
 
-  //특정 유저의 모든 게시물 가져오기
-  @Get() // product?user=XXXX
-  async getUserAllProducts(@Query('user') user: string) {
-    console.log('passed');
-    return await this.productService.findUserAllProducts(user);
-  }
-
-  // 빌리기/빌려주기 로 구분하게 모든 게시물 가져오기
-  @Get() //
-  async getProducts(@Query('postType') postType: postType) {
-    return await this.productService.findByTypeOfPost(postType);
-  }
-
-  // 특정 유저의 빌리기/빌려주기 별 게시물 가져오기
+  // 게시물 가져오기 (유저별 / 게시물 타입 별)
   @Get() // product?user=XXXX&postType=lend
-  async getProductsByUser(
-    @Query('user') user: string,
-    @Query('postType') postType: postType,
-  ) {
+  async getProductsByUser(@Body() body: FindProductDTO) {
     console.log('passed');
-    return await this.productService.findByUser(user, postType);
+    return await this.productService.findProducts(body);
   }
 
   // 특정 게시물 정보 가져오기
