@@ -34,24 +34,24 @@ export class CreateProductDTO {
   @IsOptional()
   borrower: string;
 
-  @IsNumber()
-  stateOfTransaction: stateOfTransaction;
+  @IsString()
+  stateOfTransaction: string;
 
   @IsString()
   address: string;
 
-  @IsNumber()
-  price: number;
+  @IsString()
+  price: string;
 
   @IsString()
   period: string;
 
-  @IsArray()
-  hashtag: string[];
+  @IsString()
+  hashtag: string;
 
-  @IsBoolean()
-  delivery: boolean;
+  @IsString()
+  delivery: string;
 
-  @IsBoolean()
-  direct: boolean;
+  @IsString()
+  direct: string;
 }
