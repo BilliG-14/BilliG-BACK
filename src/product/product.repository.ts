@@ -69,6 +69,7 @@ export class ProductRepository {
     const result = await this.productModel.findOneAndUpdate(
       { _id: productId },
       editProduct,
+      { returnDocument: 'after', returnNewDocument: true },
     );
     return result;
   }
