@@ -28,23 +28,23 @@ export class Product {
   @Prop({ required: true, type: Types.ObjectId, ref: 'Category' })
   category: Category;
 
-  @Prop({ required: true })
+  @Prop({ required: true, type: Types.ObjectId, ref: 'User' })
   author: string;
 
   @Prop({ required: true })
   title: string;
 
   @Prop({ required: true })
-  contents: string;
+  description: string;
 
   @Prop({ required: false })
   imgUrl: string[];
 
   // 빌려주는사람, 빌리는사람 은 유저데이터와 populate 시켜야 함
-  @Prop({ required: false })
+  @Prop({ type: Types.ObjectId, ref: 'User' })
   lender: string;
 
-  @Prop({ required: false })
+  @Prop({ type: Types.ObjectId, ref: 'User' })
   borrower: string;
 
   @Prop({ required: true })
@@ -53,20 +53,17 @@ export class Product {
   @Prop({ required: true })
   address: string;
 
-  @Prop({ required: true })
-  price: number;
+  @Prop({ required: true, type: Object })
+  price: object;
 
-  @Prop({ required: true })
-  period: string;
+  @Prop({ required: true, type: Object })
+  period: object;
 
   @Prop({ required: true })
   hashtag: string[];
 
-  @Prop({ required: true })
-  delivery: boolean;
-
-  @Prop({ required: true })
-  direct: boolean;
+  @Prop({ required: true, type: Object })
+  tradeWay: object;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);

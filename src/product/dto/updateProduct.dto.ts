@@ -27,7 +27,7 @@ export class UpdateProductDTO {
 
   @IsOptional()
   @IsString()
-  contents: string;
+  description: string;
 
   @IsOptional()
   imgUrl: string[];
@@ -47,22 +47,18 @@ export class UpdateProductDTO {
   address: string;
 
   @IsOptional()
-  @IsNumber()
-  price: number;
+  @IsObject()
+  price: object;
 
   @IsOptional()
-  @IsString()
-  period: string;
+  @IsObject()
+  period: object;
+
+  @IsOptional()
+  @IsObject()
+  tradeWay: object;
 
   @IsOptional()
   @IsArray()
   hashtag: string[];
-
-  @IsOptional()
-  @IsBoolean()
-  delivery: boolean;
-
-  @IsOptional()
-  @IsBoolean()
-  direct: boolean;
 }

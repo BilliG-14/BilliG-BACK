@@ -22,7 +22,7 @@ export class CreateProductDTO {
   title: string;
 
   @IsString()
-  contents: string;
+  description: string;
 
   @IsOptional()
   @IsArray()
@@ -40,18 +40,15 @@ export class CreateProductDTO {
   @IsString()
   address: string;
 
-  @IsNumber()
-  price: number;
+  @IsObject()
+  price: object;
 
-  @IsString()
-  period: string;
+  @IsObject()
+  period: object;
+
+  @IsObject()
+  tradeWay: object;
 
   @IsArray()
   hashtag: string[];
-
-  @IsBoolean()
-  delivery: boolean;
-
-  @IsBoolean()
-  direct: boolean;
 }
