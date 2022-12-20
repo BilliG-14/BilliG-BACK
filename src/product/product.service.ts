@@ -4,15 +4,17 @@ import { Model } from 'mongoose';
 import { CreateProductDTO } from './dto/createProduct.dto';
 import { UpdateProductDTO } from './dto/updateProduct.dto';
 import { postType } from './types/state.type';
-import { ProductRepository } from './product.repository';
 import { Product, ProductDocument } from './schemas/product.schema';
 
 @Injectable()
 export class ProductService {
-  constructor(private readonly productRepository: ProductRepository) {}
+  constructor(
+    @InjectModel(Product.name)
+    private readonly productModel: Model<ProductDocument>,
+  ) {}
 
   async findProducts(body) {
-    return await this.productRepository.findProducts(body);
+    return await this.productModel.find({ body });
   }
 
   // async findByTypeOfPost(typeOfPost: postType) {
@@ -34,7 +36,13 @@ export class ProductService {
   // }
 
   async findOneProduct(id: string) {
-    return await this.productRepository.findById(id);
+    const result = await this.productModel
+      .find({ _id: id })
+      .populate('category')
+      .populate('author')
+      .populate('lender')
+      .populate('borrower');
+    return result;
   }
 
   // 게시물 생성
@@ -44,7 +52,7 @@ export class ProductService {
       category,
       author,
       title,
-      contents,
+      description,
       imgUrl,
       lender,
       borrower,
@@ -53,8 +61,7 @@ export class ProductService {
       price,
       period,
       hashtag,
-      delivery,
-      direct,
+      tradeWay,
     } = createProduct;
 
     const inputProduct = {
@@ -62,7 +69,7 @@ export class ProductService {
       category,
       author,
       title,
-      contents,
+      description,
       ...(imgUrl && { imgUrl }),
       ...(lender && { lender }),
       ...(borrower && { borrower }),
@@ -71,11 +78,10 @@ export class ProductService {
       price,
       period,
       hashtag,
-      delivery,
-      direct,
+      tradeWay,
     };
-    const result = await this.productRepository.createProduct(inputProduct);
-    return result.save();
+    const result = await this.productModel.create(inputProduct);
+    return result;
   }
 
   // 게시물 수정
@@ -85,7 +91,7 @@ export class ProductService {
       category,
       author,
       title,
-      contents,
+      description,
       imgUrl,
       lender,
       borrower,
@@ -94,8 +100,7 @@ export class ProductService {
       price,
       period,
       hashtag,
-      delivery,
-      direct,
+      tradeWay,
     } = editproduct;
 
     const inputProduct = {
@@ -103,7 +108,7 @@ export class ProductService {
       ...(category && { category }),
       ...(author && { author }),
       ...(title && { title }),
-      ...(contents && { contents }),
+      ...(description && { description }),
       ...(imgUrl && { imgUrl }),
       ...(lender && { lender }),
       ...(borrower && { borrower }),
@@ -112,14 +117,18 @@ export class ProductService {
       ...(price && { price }),
       ...(period && { period }),
       ...(hashtag && { hashtag }),
-      ...(delivery && { delivery }),
-      ...(direct && { direct }),
+      ...(tradeWay && { tradeWay }),
     };
-    const result = await this.productRepository.updateProduct(id, inputProduct);
+    const result = await this.productModel.findOneAndUpdate(
+      { _id: id },
+      inputProduct,
+      { returnDocument: 'after', returnNewDocument: true },
+    );
     return result;
   }
 
   async deleteProduct(id: string) {
-    return this.productRepository.deleteProduct(id);
+    const result = await this.productModel.findOneAndDelete({ _id: id });
+    return result;
   }
 }
