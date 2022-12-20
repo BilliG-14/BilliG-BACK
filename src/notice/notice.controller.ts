@@ -41,9 +41,14 @@ export class NoticeController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Patch()
-  async updateNotice(@Req() request, @Body() noticeInfo: UpdateNoticeDTO) {
+  @Patch(':id')
+  async updateNotice(
+    @Req() request,
+    @Param('id') id: string,
+    @Body() noticeInfo: UpdateNoticeDTO,
+  ) {
     const notice = await this.noticeService.update(
+      id,
       request.user._id,
       noticeInfo,
     );
@@ -51,8 +56,8 @@ export class NoticeController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete()
-  async deleteNotice(@Body() { id }: { id: string }) {
+  @Delete(':id')
+  async deleteNotice(@Param('id') id: string) {
     await this.noticeService.delete(id);
   }
 }

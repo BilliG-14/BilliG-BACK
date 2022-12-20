@@ -9,6 +9,7 @@ import { CategoryModule } from './category/category.module';
 import { AuthModule } from './auth/auth.module';
 import { NoticeModule } from './notice/notice.module';
 import { LoggerMiddleware } from './logger/logger.middleware';
+import { ReportModule } from './report/report.module';
 
 @Module({
   imports: [
@@ -20,10 +21,10 @@ import { LoggerMiddleware } from './logger/logger.middleware';
       isGlobal: true,
     }),
     MongooseModule.forRoot(
-      process.env.MONGODB_URI ??
-        'mongodb+srv://fourteen:1q2w3e4r@cluster0.hhabnie.mongodb.net/?retryWrites=true&w=majority',
+      process.env.MONGODB_URI ?? 'mongodb://localhost:27017',
     ),
     CategoryModule,
+    ReportModule,
   ],
   controllers: [AppController],
   providers: [AppService],

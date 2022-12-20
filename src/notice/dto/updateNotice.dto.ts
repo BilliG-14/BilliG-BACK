@@ -1,10 +1,6 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class UpdateNoticeDTO {
-  @IsNotEmpty()
-  @IsString()
-  readonly id?: string;
-
   @IsOptional()
   @IsString()
   readonly title?: string;
