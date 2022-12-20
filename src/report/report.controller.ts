@@ -33,7 +33,7 @@ export class ReportController {
   @Post()
   async createReport(@Req() request, @Body() reportInfo: CreateReportDTO) {
     const report = await this.reportService.create({
-      ...reportInfo,
+      details: reportInfo.details,
       reporter: request.user._id,
       target: new Types.ObjectId(reportInfo.target),
     });
