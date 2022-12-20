@@ -22,6 +22,8 @@ import * as path from 'path';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { S3Client } from '@aws-sdk/client-s3';
 import { FindProductDTO } from './dto/findProduct.dto';
+import { parse } from 'path';
+import { InputProductDTO } from './dto/inputProduct.dto';
 
 const s3 = new S3Client({
   region: 'ap-northeast-2', // 환경변수로 선언하면 값을 못 읽어오는 문제 있음. 왜 ?????
@@ -67,7 +69,7 @@ export class ProductController {
     }),
   )
   async createProduct(
-    @Body() body: CreateProductDTO,
+    @Body() body: InputProductDTO,
     @UploadedFiles() images: Array<Express.MulterS3.File>,
   ) {
     if (!images) {
@@ -76,9 +78,13 @@ export class ProductController {
       );
     }
     const result = [];
-    images.forEach((image) => result.push({ filePath: image.location }));
+    const inputData = JSON.parse(body.data);
+    images.forEach((image) => result.push(image.location));
 
-    return await this.productService.createProduct({ ...body, imgUrl: result });
+    return await this.productService.createProduct({
+      ...inputData,
+      imgUrl: result,
+    });
   }
 
   // 특정 게시물 수정하기

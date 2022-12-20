@@ -116,7 +116,7 @@ export class ProductService {
       ...(direct && { direct }),
     };
     const result = await this.productRepository.updateProduct(id, inputProduct);
-    return result.save();
+    return result;
   }
 
   async deleteProduct(id: string) {
