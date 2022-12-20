@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Report, ReportDocument } from './schemas/report.schema';
 
 @Injectable()
@@ -12,7 +12,7 @@ export class ReportService {
   async getMany() {
     const reports = await this.reportModel
       .find({})
-      .populate(['reporter', 'details'], 'name', Report.name);
+      .populate(['reporter', 'target'], 'name', Report.name);
     return reports;
   }
 
@@ -21,7 +21,7 @@ export class ReportService {
       .findOne({
         _id,
       })
-      .populate(['reporter', 'details'], 'name', Report.name);
+      .populate(['reporter', 'target'], 'name', Report.name);
     return report;
   }
 
@@ -34,5 +34,13 @@ export class ReportService {
     await this.reportModel.deleteOne({
       _id,
     });
+  }
+
+  async getReportsByTarget(id: Types.ObjectId) {
+    const reports = await this.reportModel
+      .find({ target: id })
+      .populate(['reporter', 'target'], 'details createdAt', Report.name);
+
+    return reports;
   }
 }

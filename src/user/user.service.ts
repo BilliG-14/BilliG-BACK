@@ -1,13 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Schema } from 'mongoose';
+import { Model } from 'mongoose';
+import { ReportService } from 'src/report/report.service';
 import { UpdateUserDTO } from './dto/updateUser.dto';
 import { User, UserDocument } from './schemas/user.schema';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    private reportService: ReportService,
+  ) {}
 
   async getUserById(_id: string) {
     const user = await this.userModel.findOne({ _id }, { password: false });
@@ -18,7 +22,9 @@ export class UserService {
       );
     }
 
-    return user;
+    const reports = await this.reportService.getReportsByTarget(user._id);
+
+    return { ...user.toObject(), reports: reports };
   }
 
   async getUserByEmail(email: string) {
