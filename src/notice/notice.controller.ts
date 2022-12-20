@@ -14,7 +14,6 @@ import { CreateNoticeDTO } from './dto/createNotice.dto';
 import { UpdateNoticeDTO } from './dto/updateNotice.dto';
 import { NoticeService } from './notice.service';
 
-@UseGuards(JwtAuthGuard)
 @Controller('notice')
 export class NoticeController {
   constructor(readonly noticeService: NoticeService) {}
@@ -31,6 +30,7 @@ export class NoticeController {
     return notice;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   async createNotice(@Req() request, @Body() noticeInfo: CreateNoticeDTO) {
     const notice = await this.noticeService.create({
@@ -40,17 +40,24 @@ export class NoticeController {
     return notice;
   }
 
-  @Patch()
-  async updateNotice(@Req() request, @Body() noticeInfo: UpdateNoticeDTO) {
+  @UseGuards(JwtAuthGuard)
+  @Patch(':id')
+  async updateNotice(
+    @Req() request,
+    @Param('id') id: string,
+    @Body() noticeInfo: UpdateNoticeDTO,
+  ) {
     const notice = await this.noticeService.update(
+      id,
       request.user._id,
       noticeInfo,
     );
     return notice;
   }
 
-  @Delete()
-  async deleteNotice(@Body() { id }: { id: string }) {
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  async deleteNotice(@Param('id') id: string) {
     await this.noticeService.delete(id);
   }
 }

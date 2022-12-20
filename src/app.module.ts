@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
@@ -8,6 +8,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CategoryModule } from './category/category.module';
 import { AuthModule } from './auth/auth.module';
 import { NoticeModule } from './notice/notice.module';
+import { LoggerMiddleware } from './logger/logger.middleware';
+import { ReportModule } from './report/report.module';
 
 @Module({
   imports: [
@@ -19,12 +21,16 @@ import { NoticeModule } from './notice/notice.module';
       isGlobal: true,
     }),
     MongooseModule.forRoot(
-      process.env.MONGODB_URI ??
-        'mongodb+srv://fourteen:1q2w3e4r@cluster0.hhabnie.mongodb.net/?retryWrites=true&w=majority',
+      process.env.MONGODB_URI ?? 'mongodb://localhost:27017',
     ),
     CategoryModule,
+    ReportModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}

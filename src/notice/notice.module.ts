@@ -10,5 +10,6 @@ import { Notice, NoticeSchema } from './schemas/notice.schema';
   ],
   controllers: [NoticeController],
   providers: [NoticeService],
+  exports: [NoticeService],
 })
 export class NoticeModule {}
