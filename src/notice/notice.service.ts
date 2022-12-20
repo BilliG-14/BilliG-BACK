@@ -30,10 +30,9 @@ export class NoticeService {
     return notice.save();
   }
 
-  async update(userId: string, noticeInfo: UpdateNoticeDTO) {
-    const { id, ...updateField } = noticeInfo;
+  async update(noticeId: string, userId: string, noticeInfo: UpdateNoticeDTO) {
     const notice = await this.noticeModel
-      .findOneAndUpdate({ _id: id, writer: userId }, updateField, {
+      .findOneAndUpdate({ _id: noticeId, writer: userId }, noticeInfo, {
         returnOriginal: false,
       })
       .populate('writer', 'name nickName', User.name);

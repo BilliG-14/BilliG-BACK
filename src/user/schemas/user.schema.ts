@@ -32,6 +32,12 @@ export class User {
 
   @Prop({ type: String, required: true })
   address2: string;
+
+  @Prop({ type: String, default: '' })
+  image?: string;
+
+  @Prop({ type: Boolean, default: false })
+  suspension?: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
