@@ -1,6 +1,6 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { TokenPayload } from '../auth.interface';
 import { UserService } from 'src/user/user.service';
 
@@ -16,6 +16,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(payload: TokenPayload) {
     const user = await this.userService.getUserById(payload.id);
+    if (user.suspension) {
+      throw new HttpException('이용 정지된 유저 입니다', HttpStatus.FORBIDDEN);
+    }
     return user;
   }
 }
