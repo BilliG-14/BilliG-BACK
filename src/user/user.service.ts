@@ -49,12 +49,14 @@ export class UserService {
     return createdUser.save();
   }
 
-  async update(_id: string, userInfo: UpdateUserDTO) {
+  async update(_id: string, userInfo: UpdateUserDTO, fields?: string) {
     const updatedUser = await this.userModel.findOneAndUpdate(
       { _id },
       userInfo,
       {
+        fields: fields ? fields : {},
         returnOriginal: false,
+        runValidators: true,
       },
     );
 

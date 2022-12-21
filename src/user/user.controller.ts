@@ -37,7 +37,11 @@ export class UserController {
 
   @Patch(':id')
   async updateUser(@Param('id') id: string, @Body() userInfo: UpdateUserDTO) {
-    const user = await this.userService.update(id, userInfo);
+    const user = await this.userService.update(
+      id,
+      userInfo,
+      '_id suspension role',
+    );
     return user;
   }
 

@@ -12,7 +12,7 @@ export class User {
   @Prop({ type: String, required: true })
   password: string;
 
-  @Prop({ type: String, required: true })
+  @Prop({ type: String, required: true, unique: true })
   email: string;
 
   @Prop({ type: String, required: true })
@@ -38,6 +38,9 @@ export class User {
 
   @Prop({ type: Boolean, default: false })
   suspension?: boolean;
+
+  @Prop({ type: String, default: 'user', enum: ['user', 'admin'] })
+  role?: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
