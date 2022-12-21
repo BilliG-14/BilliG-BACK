@@ -32,4 +32,8 @@ export class UpdateUserDTO {
   @IsOptional()
   @IsBoolean()
   readonly suspension?: boolean;
+
+  @IsOptional()
+  @IsString()
+  readonly image?: string;
 }
