@@ -30,13 +30,19 @@ export class UserController {
   }
 
   @Patch()
-  async updateUser(@Req() request, @Body() userInfo: UpdateUserDTO) {
+  async updateMe(@Req() request, @Body() userInfo: UpdateUserDTO) {
     const user = await this.userService.update(request.user._id, userInfo);
     return user;
   }
 
+  @Patch(':id')
+  async updateUser(@Param('id') id: string, @Body() userInfo: UpdateUserDTO) {
+    const user = await this.userService.update(id, userInfo);
+    return user;
+  }
+
   @Delete()
-  async deleteUser(@Req() request) {
+  async deleteMe(@Req() request) {
     await this.userService.deleteUserById(request.user._id);
   }
 }
