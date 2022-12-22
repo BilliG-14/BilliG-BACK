@@ -47,18 +47,26 @@ export class AppController {
   @Get('refresh')
   async refreshUser(@Req() request, @Res() response) {
     const cookies = request.headers.cookie;
+    console.log(cookies);
+
     const cookieArr = cookies
       .split(';')
       .filter((el: string) => el.indexOf('refresh') >= 0)[0];
+    console.log(cookieArr);
 
     if (!cookieArr) {
       throw new HttpException('토큰이 없습니다', HttpStatus.UNAUTHORIZED);
     }
+
     const token = cookieArr.split('=')[1];
+    console.log(token);
+
     const jwtDecoded = jwt.verify(
       token,
       process.env.JWT_SECRETKEY ?? 'secretkey',
     );
+
+    console.log(token);
     const id = (<{ id: string }>jwtDecoded).id;
     const { access, refresh } = this.authService.createToken({ id });
     response.setHeader('Set-Cookie', refresh);
