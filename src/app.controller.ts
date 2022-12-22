@@ -2,8 +2,9 @@ import {
   Body,
   Controller,
   Get,
-  HttpException,
-  HttpStatus,
+  // HttpException,
+  // HttpStatus,
+  Logger,
   Post,
   Req,
   Res,
@@ -35,21 +36,30 @@ export class AppController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async loginUser(@Req() requestWithUser, @Res() response) {
+  async loginUser(
+    @Req() requestWithUser,
+    @Res({ passthrough: true }) response,
+  ) {
     const { user } = requestWithUser;
     const { access, refresh } = this.authService.createToken({
       id: user._id,
     });
-    response.cookie('refresh', refresh);
+    response.cookie('refresh', refresh, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
+    });
     return response.send({ ...user, token: access });
   }
 
   @Get('refresh')
-  async refreshUser(@Req() request, @Res() response) {
+  async refreshUser(@Req() request, @Res({ passthrough: true }) response) {
+    const logger = new Logger();
     const cookies = request?.cookies?.refresh;
-    if (!cookies) {
-      throw new HttpException('토큰이 없습니다', HttpStatus.UNAUTHORIZED);
-    }
+    logger.log(request.cookies);
+    logger.log(cookies);
+    // if (!cookies) {
+    //   throw new HttpException('토큰이 없습니다', HttpStatus.UNAUTHORIZED);
+    // }
 
     const jwtDecoded = jwt.verify(
       cookies,
@@ -58,7 +68,7 @@ export class AppController {
 
     const id = (<{ id: string }>jwtDecoded).id;
     const { access, refresh } = this.authService.createToken({ id });
-    response.setHeader('Set-Cookie', refresh);
+    response.cookie('refresh', refresh);
     return response.send({ userId: id, token: access });
   }
 }
