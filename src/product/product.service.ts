@@ -14,7 +14,8 @@ export class ProductService {
   ) {}
 
   async findProducts(body) {
-    return await this.productModel.find({ body });
+    console.dir(body);
+    return await this.productModel.find(body);
   }
 
   // async findByTypeOfPost(typeOfPost: postType) {

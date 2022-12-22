@@ -29,7 +29,11 @@ export class CategoryService {
   }
 
   async deleteCategory(_id: string) {
-    const existProduct = this.productService.findProducts({ category: _id });
+    const existProduct = (
+      await this.productService.findProducts({
+        category: _id,
+      })
+    ).length;
     try {
       if (existProduct) {
         throw Error('해당 카테고리를 사용하는 제품이 존재합니다.');
