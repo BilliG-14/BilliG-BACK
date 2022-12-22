@@ -36,23 +36,17 @@ export class AppController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async loginUser(
-    @Req() requestWithUser,
-    @Res({ passthrough: true }) response,
-  ) {
+  async loginUser(@Req() requestWithUser, @Res() response) {
     const { user } = requestWithUser;
     const { access, refresh } = this.authService.createToken({
       id: user._id,
     });
-    response.cookie('refresh', refresh, {
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000,
-    });
+    response.setHeader('Set-Cookie', `refresh=${refresh}`);
     return response.send({ ...user, token: access });
   }
 
   @Get('refresh')
-  async refreshUser(@Req() request, @Res({ passthrough: true }) response) {
+  async refreshUser(@Req() request, @Res() response) {
     const logger = new Logger();
     const cookies = request?.cookies?.refresh;
     logger.log(request.cookies);
@@ -68,7 +62,7 @@ export class AppController {
 
     const id = (<{ id: string }>jwtDecoded).id;
     const { access, refresh } = this.authService.createToken({ id });
-    response.cookie('refresh', refresh);
+    response.setHeader('Set-Cookie', `refresh=${refresh}`);
     return response.send({ userId: id, token: access });
   }
 }
