@@ -2,12 +2,14 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
+  HttpStatus,
   Post,
   Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
-import jwt from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 import { AppService } from './app.service';
 import { AuthService } from './auth/auth.service';
 import { RegisterUserDTO } from './auth/dto/registerUser.dto';
@@ -38,15 +40,23 @@ export class AppController {
     const { access, refresh } = this.authService.createToken({
       id: user._id,
     });
-    response.setHeader('Set-Cookie', refresh);
+    response.setHeader('Set-Cookie', `refresh=${refresh}`);
     return response.send({ ...user, token: access });
   }
 
   @Get('refresh')
   async refreshUser(@Req() request, @Res() response) {
-    const refreshCookie = request.headers.cookie;
+    const cookies = request.headers.cookie;
+    const cookieArr = cookies
+      .split(';')
+      .filter((el: string) => el.indexOf('refresh') >= 0)[0];
+
+    if (!cookieArr) {
+      throw new HttpException('토큰이 없습니다', HttpStatus.UNAUTHORIZED);
+    }
+    const token = cookieArr.split('=')[1];
     const jwtDecoded = jwt.verify(
-      refreshCookie,
+      token,
       process.env.JWT_SECRETKEY ?? 'secretkey',
     );
     const id = (<{ id: string }>jwtDecoded).id;
