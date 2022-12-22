@@ -29,9 +29,11 @@ export class CreateProductDTO {
   imgUrl: string[];
 
   @IsOptional()
+  @IsString()
   lender: string;
 
   @IsOptional()
+  @IsString()
   borrower: string;
 
   @IsNumber()
@@ -43,6 +45,7 @@ export class CreateProductDTO {
   @IsObject()
   price: object;
 
+  @IsOptional()
   @IsObject()
   period: object;
 
