@@ -7,10 +7,10 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
+import jwt from 'jsonwebtoken';
 import { AppService } from './app.service';
 import { AuthService } from './auth/auth.service';
 import { RegisterUserDTO } from './auth/dto/registerUser.dto';
-import JwtAuthGuard from './auth/guard/jwt-auth.guard';
 import { LocalAuthGuard } from './auth/guard/local-auth.guard';
 
 @Controller()
@@ -42,14 +42,16 @@ export class AppController {
     return response.send({ ...user, token: access });
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('refresh')
-  async refreshUser(@Req() requestWithUser, @Res() response) {
-    const { user } = requestWithUser;
-    const { access, refresh } = this.authService.createToken({
-      id: user._id,
-    });
+  async refreshUser(@Req() request, @Res() response) {
+    const refreshCookie = request.headers.cookie;
+    const jwtDecoded = jwt.verify(
+      refreshCookie,
+      process.env.JWT_SECRETKEY ?? 'secretkey',
+    );
+    const id = (<{ id: string }>jwtDecoded).id;
+    const { access, refresh } = this.authService.createToken({ id });
     response.setHeader('Set-Cookie', refresh);
-    return response.send({ ...user, token: access });
+    return response.send({ userId: id, token: access });
   }
 }
