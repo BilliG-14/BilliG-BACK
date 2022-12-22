@@ -7,6 +7,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
+import jwt from 'jsonwebtoken';
 import { AppService } from './app.service';
 import { AuthService } from './auth/auth.service';
 import { RegisterUserDTO } from './auth/dto/registerUser.dto';
@@ -39,5 +40,18 @@ export class AppController {
     });
     response.setHeader('Set-Cookie', refresh);
     return response.send({ ...user, token: access });
+  }
+
+  @Get('refresh')
+  async refreshUser(@Req() request, @Res() response) {
+    const refreshCookie = request.headers.cookie;
+    const jwtDecoded = jwt.verify(
+      refreshCookie,
+      process.env.JWT_SECRETKEY ?? 'secretkey',
+    );
+    const id = (<{ id: string }>jwtDecoded).id;
+    const { access, refresh } = this.authService.createToken({ id });
+    response.setHeader('Set-Cookie', refresh);
+    return response.send({ userId: id, token: access });
   }
 }
