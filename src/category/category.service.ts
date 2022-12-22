@@ -1,31 +1,42 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { ProductService } from 'src/product/product.service';
+import { Product, ProductDocument } from 'src/product/schemas/product.schema';
 import { Category, CategoryDocument } from './schemas/category.schema';
 
 @Injectable()
 export class CategoryService {
   constructor(
     @InjectModel(Category.name)
-    private readonly categotyModel: Model<CategoryDocument>,
+    private readonly categoryModel: Model<CategoryDocument>,
+    private productService: ProductService,
   ) {}
 
   async getAllCategories() {
-    return await this.categotyModel.find({});
+    return await this.categoryModel.find({});
   }
 
   async addCategory(name: string) {
-    return await this.categotyModel.create({ name });
+    return await this.categoryModel.create({ name });
   }
 
   async editCategory(_id: string, newName: string) {
-    return await this.categotyModel.findOneAndUpdate(
+    return await this.categoryModel.findOneAndUpdate(
       { _id: _id },
       { name: newName },
     );
   }
 
   async deleteCategory(_id: string) {
-    return await this.categotyModel.findOneAndDelete({ _id: _id });
+    const existProduct = this.productService.findProducts({ category: _id });
+    try {
+      if (existProduct) {
+        throw Error('해당 카테고리를 사용하는 제품이 존재합니다.');
+      }
+      return await this.categoryModel.findOneAndDelete({ _id: _id });
+    } catch (e) {
+      return e.message;
+    }
   }
 }

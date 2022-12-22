@@ -1,4 +1,4 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory, SchemaOptions } from '@nestjs/mongoose';
 import { IsString } from 'class-validator';
 import { HydratedDocument, Schema as MongooseSchema, Types } from 'mongoose';
 import { Category } from 'src/category/schemas/category.schema';
@@ -19,8 +19,11 @@ export type ProductDocument = HydratedDocument<Product>;
 // 주소
 // 가격
 // 기간
+const options: SchemaOptions = {
+  timestamps: true,
+};
 
-@Schema()
+@Schema(options)
 export class Product {
   @Prop({ required: false })
   postType: postType;
