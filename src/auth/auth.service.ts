@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { RegisterUserDTO } from './dto/registerUser.dto';
@@ -16,6 +16,12 @@ export class AuthService {
 
   async validateUser(email: string, password: string): Promise<any> {
     const user = await this.userService.getUserByEmail(email);
+    if (!user) {
+      throw new HttpException(
+        '사용자가 존재하지 않습니다',
+        HttpStatus.NOT_FOUND,
+      );
+    }
     const isPasswordMatching = await bcrypt.compare(password, user.password);
 
     if (isPasswordMatching) {
@@ -41,7 +47,7 @@ export class AuthService {
     };
   }
 
-  public async creatUserHashed(userInfo: RegisterUserDTO) {
+  async creatUserHashed(userInfo: RegisterUserDTO) {
     const passwordHashed = await bcrypt.hash(userInfo.password, 10);
     const userInfoHashed = {
       ...userInfo,
@@ -51,5 +57,10 @@ export class AuthService {
     const user = await this.userService.create(userInfoHashed);
     const { password, ...result } = user.toObject();
     return result;
+  }
+
+  async checkUserEmail(email: string) {
+    const user = await this.userService.getUserByEmail(email);
+    return user;
   }
 }

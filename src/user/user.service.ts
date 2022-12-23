@@ -29,13 +29,6 @@ export class UserService {
 
   async getUserByEmail(email: string) {
     const user = await this.userModel.findOne({ email });
-    if (!user) {
-      throw new HttpException(
-        '사용자가 존재하지 않습니다',
-        HttpStatus.NOT_FOUND,
-      );
-    }
-
     return user;
   }
 
