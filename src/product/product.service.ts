@@ -13,9 +13,9 @@ export class ProductService {
     private readonly productModel: Model<ProductDocument>,
   ) {}
 
-  async findProducts(body) {
-    console.dir(body);
-    return await this.productModel.find(body);
+  async findProducts(query) {
+    console.dir(query);
+    return await this.productModel.find(query);
   }
 
   // async findByTypeOfPost(typeOfPost: postType) {
