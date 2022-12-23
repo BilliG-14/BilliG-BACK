@@ -75,6 +75,6 @@ export class AppController {
   @Post('checkEmail')
   async checkEmail(@Body() { email }: { email: string }) {
     const user = await this.authService.checkUserEmail(email);
-    return { isExist: !!user };
+    return { userId: user ? user._id : null };
   }
 }
