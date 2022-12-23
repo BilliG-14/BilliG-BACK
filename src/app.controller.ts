@@ -71,4 +71,10 @@ export class AppController {
     });
     return response.send({ userId: id, token: access });
   }
+
+  @Post('checkEmail')
+  async checkEmail(@Body() { email }: { email: string }) {
+    const user = await this.authService.checkUserEmail(email);
+    return { isExist: !!user };
+  }
 }
