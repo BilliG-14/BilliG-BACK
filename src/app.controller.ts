@@ -40,28 +40,25 @@ export class AppController {
     const { access, refresh } = this.authService.createToken({
       id: user._id,
     });
-    response.setHeader('Set-Cookie', `refresh=${refresh}`);
+    response.cookie('refresh', refresh);
     return response.send({ ...user, token: access });
   }
 
   @Get('refresh')
   async refreshUser(@Req() request, @Res() response) {
-    const cookies = request.headers.cookie;
-    const cookieArr = cookies
-      .split(';')
-      .filter((el: string) => el.indexOf('refresh') >= 0)[0];
-
-    if (!cookieArr) {
-      throw new HttpException('토큰이 없습니다', HttpStatus.UNAUTHORIZED);
+    const cookies = request?.cookies?.refresh;
+    if (!cookies) {
+      throw new HttpException('토큰이 없습니다', HttpStatus.BAD_REQUEST);
     }
-    const token = cookieArr.split('=')[1];
+
     const jwtDecoded = jwt.verify(
-      token,
+      cookies,
       process.env.JWT_SECRETKEY ?? 'secretkey',
     );
+
     const id = (<{ id: string }>jwtDecoded).id;
     const { access, refresh } = this.authService.createToken({ id });
-    response.setHeader('Set-Cookie', refresh);
+    response.cookie('refresh', refresh);
     return response.send({ userId: id, token: access });
   }
 }
