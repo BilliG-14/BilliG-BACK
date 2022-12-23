@@ -39,10 +39,7 @@ export class ProductService {
   async findOneProduct(id: string) {
     const result = await this.productModel
       .find({ _id: id })
-      .populate('category')
-      .populate('author')
-      .populate('lender')
-      .populate('borrower');
+      .populate(['category', 'author', 'lender', 'borrower']);
     return result;
   }
 
