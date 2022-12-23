@@ -33,7 +33,11 @@ export class User {
   @Prop({ type: String, required: true })
   address2: string;
 
-  @Prop({ type: String, default: '' })
+  @Prop({
+    type: String,
+    default:
+      'https://billige.s3.ap-northeast-2.amazonaws.com/1671781855513_defaulUser.png',
+  })
   image?: string;
 
   @Prop({ type: Boolean, default: false })
