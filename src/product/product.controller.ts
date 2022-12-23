@@ -39,9 +39,9 @@ export class ProductController {
 
   // 게시물 가져오기 (유저별 / 게시물 타입 별)
   @Get() // product?user=XXXX&postType=lend
-  async getProductsByUser(@Body() body: FindProductDTO) {
-    console.dir(body);
-    return await this.productService.findProducts(body);
+  async getProductsByUser(@Query() query: FindProductDTO) {
+    console.dir(query);
+    return await this.productService.findProducts(query);
   }
 
   // 특정 게시물 정보 가져오기
