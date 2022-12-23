@@ -40,7 +40,12 @@ export class AppController {
     const { access, refresh } = this.authService.createToken({
       id: user._id,
     });
-    response.cookie('refresh', refresh);
+    response.cookie('refresh', refresh, {
+      sameSite: 'none',
+      secure: true,
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 1,
+    });
     return response.send({ ...user, token: access });
   }
 
@@ -58,7 +63,18 @@ export class AppController {
 
     const id = (<{ id: string }>jwtDecoded).id;
     const { access, refresh } = this.authService.createToken({ id });
-    response.cookie('refresh', refresh);
+    response.cookie('refresh', refresh, {
+      sameSite: 'none',
+      secure: true,
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 1,
+    });
     return response.send({ userId: id, token: access });
+  }
+
+  @Post('checkEmail')
+  async checkEmail(@Body() { email }: { email: string }) {
+    const user = await this.authService.checkUserEmail(email);
+    return { userId: user ? user._id : null };
   }
 }
