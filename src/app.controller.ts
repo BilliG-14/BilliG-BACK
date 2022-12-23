@@ -48,7 +48,7 @@ export class AppController {
   async refreshUser(@Req() request, @Res() response) {
     const cookies = request?.cookies?.refresh;
     if (!cookies) {
-      throw new HttpException('토큰이 없습니다', HttpStatus.UNAUTHORIZED);
+      throw new HttpException('토큰이 없습니다', HttpStatus.BAD_REQUEST);
     }
 
     const jwtDecoded = jwt.verify(
@@ -58,7 +58,7 @@ export class AppController {
 
     const id = (<{ id: string }>jwtDecoded).id;
     const { access, refresh } = this.authService.createToken({ id });
-    response.setHeader('Set-Cookie', refresh);
+    response.cookie('refresh', refresh);
     return response.send({ userId: id, token: access });
   }
 }
