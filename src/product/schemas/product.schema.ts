@@ -3,6 +3,7 @@ import { IsString } from 'class-validator';
 import { HydratedDocument, Schema as MongooseSchema, Types } from 'mongoose';
 import { Category } from 'src/category/schemas/category.schema';
 import { postType, stateOfTransaction } from '../types/state.type';
+import * as mongoosePaginate from 'mongoose-paginate-v2';
 
 export type ProductDocument = HydratedDocument<Product>;
 
@@ -69,4 +70,6 @@ export class Product {
   tradeWay: object;
 }
 
-export const ProductSchema = SchemaFactory.createForClass(Product);
+const schema = SchemaFactory.createForClass(Product);
+schema.plugin(mongoosePaginate);
+export const ProductSchema = schema;
