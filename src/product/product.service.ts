@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, PaginateModel } from 'mongoose';
 import { CreateProductDTO } from './dto/createProduct.dto';
 import { UpdateProductDTO } from './dto/updateProduct.dto';
 import { postType } from './types/state.type';
 import { Product, ProductDocument } from './schemas/product.schema';
+import { paginate } from 'mongoose-paginate-v2';
 
 @Injectable()
 export class ProductService {
   constructor(
     @InjectModel(Product.name)
-    private readonly productModel: Model<ProductDocument>,
+    private readonly productModel: PaginateModel<ProductDocument>,
   ) {}
 
   async findProducts(query) {
@@ -18,23 +19,13 @@ export class ProductService {
     return await this.productModel.find(query);
   }
 
-  // async findByTypeOfPost(typeOfPost: postType) {
-  //   return await this.productRepository.findByTypeOfPost(typeOfPost);
-  // }
-
-  // async findByCategory(category: string) {
-  //   return await this.productRepository.findByCategory(category);
-  // }
-
-  // async findProducts(user: string, typeOfPost: postType) {
-
-  //   switch (typeOfPost) {
-  //     case postType.lend:
-  //       return await this.productRepository.findByLender(user);
-  //     case postType.borrow:
-  //       return await this.productRepository.findByBorrower(user);
-  //   }
-  // }
+  async findProductsByPage(per, page, filter) {
+    return await this.productModel.paginate(filter, {
+      sort: { createdAt: -1 },
+      limit: per,
+      page,
+    });
+  }
 
   async findOneProduct(id: string) {
     const result = await this.productModel

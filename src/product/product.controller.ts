@@ -37,9 +37,20 @@ const s3 = new S3Client({
 export class ProductController {
   constructor(readonly productService: ProductService) {}
 
-  // 게시물 가져오기 (유저별 / 게시물 타입 별)
+  @Get('page') // product?user=XXXX&postType=lend
+  async getProductsByPage(
+    // @Query('per') per: number,
+    // @Query('page') page: number,
+    @Query() query: FindProductDTO,
+  ) {
+    const { per, page, ...filter } = query;
+
+    console.log('controller passed');
+    return await this.productService.findProductsByPage(per, page, filter);
+  }
+  //게시물 가져오기 (유저별 / 게시물 타입 별)
   @Get() // product?user=XXXX&postType=lend
-  async getProductsByUser(@Query() query: FindProductDTO) {
+  async getProducts(@Query() query: FindProductDTO) {
     console.dir(query);
     return await this.productService.findProducts(query);
   }
