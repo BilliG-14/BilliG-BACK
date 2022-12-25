@@ -44,8 +44,6 @@ export class ProductController {
     @Query() query: FindProductDTO,
   ) {
     const { per, page, ...filter } = query;
-
-    console.log('controller passed');
     return await this.productService.findProductsByPage(per, page, filter);
   }
   //게시물 가져오기 (유저별 / 게시물 타입 별)

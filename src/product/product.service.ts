@@ -6,12 +6,15 @@ import { UpdateProductDTO } from './dto/updateProduct.dto';
 import { postType } from './types/state.type';
 import { Product, ProductDocument } from './schemas/product.schema';
 import { paginate } from 'mongoose-paginate-v2';
+import { find } from 'rxjs';
+import { HashtagService } from 'src/hashtag/hashtag.service';
 
 @Injectable()
 export class ProductService {
   constructor(
     @InjectModel(Product.name)
     private readonly productModel: PaginateModel<ProductDocument>,
+    private hashtagService: HashtagService,
   ) {}
 
   async findProducts(query) {
@@ -53,6 +56,11 @@ export class ProductService {
       tradeWay,
     } = createProduct;
 
+    // hashtag 검색 후 등록
+    const hashtagIds = hashtag.map((tag) =>
+      this.hashtagService.useHashtag(tag),
+    );
+
     const inputProduct = {
       postType,
       category,
@@ -66,7 +74,7 @@ export class ProductService {
       address,
       price,
       period,
-      hashtag,
+      hashtag: hashtagIds,
       tradeWay,
     };
     const result = await this.productModel.create(inputProduct);
@@ -92,6 +100,14 @@ export class ProductService {
       tradeWay,
     } = editproduct;
 
+    const targetProduct = await this.productModel.findOne({ _id: id });
+    const targetHashtags = targetProduct.hashtag;
+    targetHashtags.forEach((tag) => this.hashtagService.notUseHashtag(tag));
+
+    const hashtagIds = hashtag.map((tag) =>
+      this.hashtagService.useHashtag(tag),
+    );
+
     const inputProduct = {
       ...(postType && { postType }),
       ...(category && { category }),
@@ -105,7 +121,7 @@ export class ProductService {
       ...(address && { address }),
       ...(price && { price }),
       ...(period && { period }),
-      ...(hashtag && { hashtag }),
+      ...(hashtag && { hashtagIds }),
       ...(tradeWay && { tradeWay }),
     };
     const result = await this.productModel.findOneAndUpdate(
