@@ -21,9 +21,11 @@ export class ProductService {
 
   async findProductsByPage(per, page, filter) {
     let { stateOfTransaction, ...rest } = filter;
-    stateOfTransaction = parseInt(stateOfTransaction);
-    console.log(stateOfTransaction);
-    filter = { stateOfTransaction, rest };
+    if (stateOfTransaction) {
+      stateOfTransaction = parseInt(stateOfTransaction);
+      console.log(typeof stateOfTransaction);
+      filter = { stateOfTransaction, ...rest };
+    }
     return await this.productModel.paginate(filter, {
       sort: { createdAt: -1 },
       limit: per,
