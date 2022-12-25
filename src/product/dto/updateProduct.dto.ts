@@ -39,7 +39,6 @@ export class UpdateProductDTO {
   borrower: string;
 
   @IsOptional()
-  @IsNumber()
   stateOfTransaction: stateOfTransaction;
 
   @IsOptional()
