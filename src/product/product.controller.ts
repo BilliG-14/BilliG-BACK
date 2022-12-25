@@ -9,6 +9,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
@@ -24,6 +25,7 @@ import { S3Client } from '@aws-sdk/client-s3';
 import { FindProductDTO } from './dto/findProduct.dto';
 import { parse } from 'path';
 import { InputProductDTO } from './dto/inputProduct.dto';
+import * as qs from 'qs';
 
 const s3 = new S3Client({
   region: 'ap-northeast-2', // 환경변수로 선언하면 값을 못 읽어오는 문제 있음. 왜 ?????
@@ -41,9 +43,12 @@ export class ProductController {
   async getProductsByPage(
     // @Query('per') per: number,
     // @Query('page') page: number,
-    @Query() query: FindProductDTO,
+    @Req() req,
+    //@Query() query: FindProductDTO,
   ) {
-    const { per, page, ...filter } = query;
+    const queries = qs.parse(req.query);
+    console.log(queries);
+    const { per, page, ...filter } = queries;
 
     console.log('controller passed');
     return await this.productService.findProductsByPage(per, page, filter);
