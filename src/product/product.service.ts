@@ -8,6 +8,7 @@ import { Product, ProductDocument } from './schemas/product.schema';
 import { paginate } from 'mongoose-paginate-v2';
 import { find } from 'rxjs';
 import { HashtagService } from 'src/hashtag/hashtag.service';
+import { handleRetry } from '@nestjs/mongoose/dist/common/mongoose.utils';
 
 @Injectable()
 export class ProductService {
@@ -18,24 +19,37 @@ export class ProductService {
   ) {}
 
   async findProducts(query) {
-    console.dir(query);
     return await this.productModel.find(query);
   }
 
   async findProductsByPage(per, page, filter) {
-    let { stateOfTransaction, ...rest } = filter;
+    let { stateOfTransaction, hashtag, ...rest } = filter;
     if (stateOfTransaction) {
       const state = stateOfTransaction.split(',').map((i) => parseInt(i));
-      console.log(state);
       stateOfTransaction = { $in: state };
       filter = { stateOfTransaction, ...rest };
     }
-    return await this.productModel.paginate(filter, {
-      sort: { createdAt: -1 },
-      populate: ['category', 'hashtag'],
-      limit: per,
-      page,
-    });
+    if (hashtag) {
+      const tags = hashtag.split(',');
+      const tagIds = await Promise.all(
+        tags.map(
+          async (tag: string) =>
+            await this.hashtagService
+              .findHashtag(tag)
+              .catch((err) => err.message),
+        ),
+      );
+      hashtag = { $all: tagIds };
+      filter = { hashtag, ...rest };
+    }
+    return await this.productModel
+      .paginate(filter, {
+        sort: { createdAt: -1 },
+        populate: ['category', 'hashtag'],
+        limit: per,
+        page,
+      })
+      .catch((err) => err.message);
   }
 
   async findOneProduct(id: string) {
@@ -118,7 +132,6 @@ export class ProductService {
     const hashtagIds = await Promise.all(
       hashtag.map(async (tag) => await this.hashtagService.useHashtag(tag)),
     );
-    console.log('hashtagIds : ', hashtagIds);
 
     const inputProduct = {
       ...(postType && { postType }),
@@ -137,7 +150,6 @@ export class ProductService {
       ...(tradeWay && { tradeWay }),
     };
 
-    console.log(inputProduct);
     const result = await this.productModel.findOneAndUpdate(
       { _id: id },
       inputProduct,
@@ -147,7 +159,12 @@ export class ProductService {
   }
 
   async deleteProduct(id: string) {
-    const result = await this.productModel.findOneAndDelete({ _id: id });
-    return result;
+    const targetProduct = await this.productModel
+      .findOneAndDelete({ _id: id })
+      .populate('hashtag');
+    targetProduct.hashtag.forEach((tag) =>
+      this.hashtagService.notUseHashtag(Object(tag).name),
+    );
+    return targetProduct;
   }
 }

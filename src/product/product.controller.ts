@@ -47,16 +47,13 @@ export class ProductController {
     //@Query() query: FindProductDTO,
   ) {
     const queries = qs.parse(req.query);
-    console.log(queries);
     const { per, page, ...filter } = queries;
-
-    console.log('controller passed');
     return await this.productService.findProductsByPage(per, page, filter);
   }
+
   //게시물 가져오기 (유저별 / 게시물 타입 별)
   @Get() // product?user=XXXX&postType=lend
   async getProducts(@Query() query: FindProductDTO) {
-    console.dir(query);
     return await this.productService.findProducts(query);
   }
 
@@ -109,7 +106,6 @@ export class ProductController {
     @Param('id') productId: string,
     @Body() body: UpdateProductDTO,
   ) {
-    console.log(productId);
     return await this.productService.updateProduct(productId, body);
   }
 
