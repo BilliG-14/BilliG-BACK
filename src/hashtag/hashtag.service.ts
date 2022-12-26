@@ -64,7 +64,6 @@ export class HashtagService {
   }
 
   async notUseHashtag(name: string) {
-    console.log(name);
     const hashtag = await this.hashtagModel.findOne({ name });
     const unUseHashtag = await this.hashtagModel.findOneAndUpdate(
       { name },
@@ -73,8 +72,9 @@ export class HashtagService {
     return unUseHashtag;
   }
 
-  // 인기 해시태그 모아보기
+  // 최근 게시물의 인기 해시태그 모아보기
   async getPopularHashtags(products: number, hashtags: number) {
+    const result = {};
     const productList = (
       await this.productModel.paginate(
         {},
@@ -85,12 +85,40 @@ export class HashtagService {
         },
       )
     ).docs;
-    const hashtagList = productList
-      .map((product) => {
-        return product.hashtag;
-      })
-      .flat();
-    const hashtagSet = [...new Set(hashtagList)];
+    const hashtagList = productList.map((product) => product.hashtag).flat();
+    hashtagList.forEach((tag) => (result[tag] = (result[tag] || 0) + 1));
+    const resultArray = [];
+    for (var tag in result) {
+      resultArray.push([tag, result[tag]]);
+    }
+    resultArray.sort((a, b) => b[1] - a[1]);
+    const popularTagsArray = resultArray.slice(0, hashtags);
+    const popularTags = await Promise.all(
+      popularTagsArray.map(async (tagId) => {
+        const tagInfo = (
+          await this.hashtagModel.findOne({ _id: tagId[0] })
+        ).toObject();
+        const popularTagInfo = { ...tagInfo, recentMentions: tagId[1] };
+        return popularTagInfo;
+      }),
+    );
+    return popularTags;
+  }
+
+  // 인기 해시태그 모아보기
+  async getPopularHa(products: number, hashtags: number) {
+    const productList = (
+      await this.productModel.paginate(
+        {},
+        {
+          sort: { createdAt: -1 },
+          limit: products,
+          page: 1,
+        },
+      )
+    ).docs;
+    const hashtagList = productList.map((product) => product.hashtag).flat();
+    const hashtagSet = [...new Set(hashtagList.map((tag) => tag.toString()))];
     const foundTags = await Promise.all(
       hashtagSet.map(async (tag_id) => {
         return await this.hashtagModel.findOne({ _id: tag_id });
