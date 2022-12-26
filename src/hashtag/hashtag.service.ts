@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { ConsoleLogger, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, PaginateModel } from 'mongoose';
-import { ProductService } from 'src/product/product.service';
+import { throws } from 'assert';
+import { PaginateModel } from 'mongoose';
+import { Product, ProductDocument } from 'src/product/schemas/product.schema';
 import { Hashtag, HashtagDocument } from './schemas/hashtag.schema';
 
 @Injectable()
@@ -9,7 +10,8 @@ export class HashtagService {
   constructor(
     @InjectModel(Hashtag.name)
     private readonly hashtagModel: PaginateModel<HashtagDocument>,
-    private readonly productService: ProductService,
+    @InjectModel(Product.name)
+    private readonly productModel: PaginateModel<ProductDocument>,
   ) {}
 
   // 단순 해시태그 검색
@@ -47,7 +49,10 @@ export class HashtagService {
     // 따라서 게시글 등록 시 해시태그가 모두 objectid로 저장되도록 설정
     const hashtag = await this.hashtagModel.findOne({ name });
     if (hashtag) {
-      hashtag.mentions++;
+      await this.hashtagModel.findOneAndUpdate(
+        { name },
+        { mentions: hashtag.mentions + 1 },
+      );
       return hashtag._id;
     } else {
       const newHashtag = await this.hashtagModel.create({
@@ -58,19 +63,27 @@ export class HashtagService {
     }
   }
 
-  async notUseHashtag(_id: string) {
-    const hashtag = await this.hashtagModel.findOne({ _id });
+  async notUseHashtag(name: string) {
+    console.log(name);
+    const hashtag = await this.hashtagModel.findOne({ name });
     const unUseHashtag = await this.hashtagModel.findOneAndUpdate(
-      { _id },
-      { mention: hashtag.mentions - 1 },
+      { name },
+      { mentions: hashtag.mentions - 1 },
     );
     return unUseHashtag;
   }
 
   // 인기 해시태그 모아보기
-  async getPopularHashtags(products, hashtags) {
+  async getPopularHashtags(products: number, hashtags: number) {
     const productList = (
-      await this.productService.findProductsByPage(products, 1, {})
+      await this.productModel.paginate(
+        {},
+        {
+          sort: { createdAt: -1 },
+          limit: products,
+          page: 1,
+        },
+      )
     ).docs;
     const hashtagList = productList
       .map((product) => {

@@ -32,6 +32,7 @@ export class ProductService {
     }
     return await this.productModel.paginate(filter, {
       sort: { createdAt: -1 },
+      populate: ['category', 'hashtag'],
       limit: per,
       page,
     });
@@ -40,7 +41,7 @@ export class ProductService {
   async findOneProduct(id: string) {
     const result = await this.productModel
       .find({ _id: id })
-      .populate(['category', 'author', 'lender', 'borrower']);
+      .populate(['category', 'author', 'lender', 'borrower', 'hashtag']);
     return result;
   }
 
@@ -64,8 +65,8 @@ export class ProductService {
     } = createProduct;
 
     // hashtag 검색 후 등록
-    const hashtagIds = hashtag.map((tag) =>
-      this.hashtagService.useHashtag(tag),
+    const hashtagIds = await Promise.all(
+      hashtag.map(async (tag) => await this.hashtagService.useHashtag(tag)),
     );
 
     const inputProduct = {
@@ -107,13 +108,17 @@ export class ProductService {
       tradeWay,
     } = editproduct;
 
-    const targetProduct = await this.productModel.findOne({ _id: id });
-    const targetHashtags = targetProduct.hashtag;
-    targetHashtags.forEach((tag) => this.hashtagService.notUseHashtag(tag));
+    const targetProduct = await this.productModel
+      .findOne({ _id: id })
+      .populate('hashtag');
 
-    const hashtagIds = hashtag.map((tag) =>
-      this.hashtagService.useHashtag(tag),
+    targetProduct.hashtag.forEach((tag) =>
+      this.hashtagService.notUseHashtag(Object(tag).name),
     );
+    const hashtagIds = await Promise.all(
+      hashtag.map(async (tag) => await this.hashtagService.useHashtag(tag)),
+    );
+    console.log('hashtagIds : ', hashtagIds);
 
     const inputProduct = {
       ...(postType && { postType }),
@@ -128,9 +133,11 @@ export class ProductService {
       ...(address && { address }),
       ...(price && { price }),
       ...(period && { period }),
-      ...(hashtag && { hashtagIds }),
+      ...(hashtag && { hashtag: hashtagIds }),
       ...(tradeWay && { tradeWay }),
     };
+
+    console.log(inputProduct);
     const result = await this.productModel.findOneAndUpdate(
       { _id: id },
       inputProduct,

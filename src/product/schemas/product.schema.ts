@@ -63,7 +63,7 @@ export class Product {
   @Prop({ required: true, type: Object })
   period: object;
 
-  @Prop([{ type: Types.ObjectId, ref: 'Hashtag' }])
+  @Prop({ type: [Types.ObjectId], ref: 'Hashtag' })
   hashtag: string[];
 
   @Prop({ required: true, type: Object })

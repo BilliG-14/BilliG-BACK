@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ProductService } from 'src/product/product.service';
+import { Product, ProductDocument } from 'src/product/schemas/product.schema';
 import { Category, CategoryDocument } from './schemas/category.schema';
 
 @Injectable()
@@ -9,7 +10,8 @@ export class CategoryService {
   constructor(
     @InjectModel(Category.name)
     private readonly categoryModel: Model<CategoryDocument>,
-    private productService: ProductService,
+    @InjectModel(Product.name)
+    private readonly productModel: Model<ProductDocument>,
   ) {}
 
   async getAllCategories() {
@@ -29,7 +31,7 @@ export class CategoryService {
 
   async deleteCategory(_id: string) {
     const existProduct = (
-      await this.productService.findProducts({
+      await this.productModel.find({
         category: _id,
       })
     ).length;

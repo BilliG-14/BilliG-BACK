@@ -109,6 +109,7 @@ export class ProductController {
     @Param('id') productId: string,
     @Body() body: UpdateProductDTO,
   ) {
+    console.log(productId);
     return await this.productService.updateProduct(productId, body);
   }
 
