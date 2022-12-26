@@ -10,6 +10,8 @@ import { AuthModule } from './auth/auth.module';
 import { NoticeModule } from './notice/notice.module';
 import { LoggerMiddleware } from './logger/logger.middleware';
 import { ReportModule } from './report/report.module';
+import { ChatGateway } from './chat/chat.gateway';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -25,9 +27,10 @@ import { ReportModule } from './report/report.module';
     ),
     CategoryModule,
     ReportModule,
+    ChatModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ChatGateway],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
