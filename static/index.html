@@ -12,18 +12,19 @@
       crossorigin="anonymous"
     ></script>
     <!-- socket.io -->
-    <script src="https://cdn.socket.io/socket.io-2.3.1.js"></script>
+    <script
+      src="https://cdn.socket.io/4.5.4/socket.io.min.js"
+      integrity="sha384-/KNQL8Nu5gCHLqwqfQjA689Hhoqgi2S84SNUxC3roTe4EhJ9AfLkp8QiQcU8AMzI"
+      crossorigin="anonymous"
+    ></script>
 
     <script>
-      const socket = io('ws://localhost:81/chat');
+      const socket = io('ws://localhost:8080/chat');
       const nickname = prompt('닉네임을 알려주세요.');
       if (!nickname) {
         window.location.reload();
       }
-      const room = prompt('입장할 방의 코드를 적어주세요.');
-      if (!room) {
-        window.location.reload();
-      }
+      const room = '1227';
       socket.emit('enter', nickname, room);
 
       socket.on('connect', () => {
@@ -33,8 +34,8 @@
         });
 
         /* 누군가 채팅침 */
-        socket.on(room, (data) => {
-          $('#chatList').append(`<div>${data[0]} : ${data[1]}</div>`);
+        socket.on(`message${room}`, (data) => {
+          $('#chatList').append(`<div>${data.name} : ${data.message}</div>`);
         });
       });
 
