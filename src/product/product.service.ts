@@ -23,6 +23,13 @@ export class ProductService {
   }
 
   async findProductsByPage(per, page, filter) {
+    let { stateOfTransaction, ...rest } = filter;
+    if (stateOfTransaction) {
+      const state = stateOfTransaction.split(',').map((i) => parseInt(i));
+      console.log(state);
+      stateOfTransaction = { $in: state };
+      filter = { stateOfTransaction, ...rest };
+    }
     return await this.productModel.paginate(filter, {
       sort: { createdAt: -1 },
       limit: per,
