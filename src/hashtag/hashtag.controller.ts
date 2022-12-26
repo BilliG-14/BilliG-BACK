@@ -35,7 +35,7 @@ export class HashtagController {
     @Body('newName') newName: string,
     @Body('mentions') mentions: number,
   ) {
-    const data = { newName, mentions };
+    const data = { name: newName, mentions };
     return await this.hashtagService.editHashtag(name, data);
   }
 
