@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import { NoticeModule } from './notice/notice.module';
 import { LoggerMiddleware } from './logger/logger.middleware';
 import { ReportModule } from './report/report.module';
+import { HashtagModule } from './hashtag/hashtag.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { ReportModule } from './report/report.module';
     ),
     CategoryModule,
     ReportModule,
+    HashtagModule,
   ],
   controllers: [AppController],
   providers: [AppService],

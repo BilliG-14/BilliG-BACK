@@ -10,7 +10,8 @@ export class CategoryService {
   constructor(
     @InjectModel(Category.name)
     private readonly categoryModel: Model<CategoryDocument>,
-    private productService: ProductService,
+    @InjectModel(Product.name)
+    private readonly productModel: Model<ProductDocument>,
   ) {}
 
   async getAllCategories() {
@@ -30,7 +31,7 @@ export class CategoryService {
 
   async deleteCategory(_id: string) {
     const existProduct = (
-      await this.productService.findProducts({
+      await this.productModel.find({
         category: _id,
       })
     ).length;
