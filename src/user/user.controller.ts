@@ -5,8 +5,11 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   Patch,
+  Post,
   Req,
   UploadedFile,
   UseGuards,
@@ -15,6 +18,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as multerS3 from 'multer-s3';
 import * as path from 'path';
+import * as bcrypt from 'bcrypt';
 import JwtAuthGuard from 'src/auth/guard/jwt-auth.guard';
 import { UpdateUserDTO } from './dto/updateUser.dto';
 import { UserService } from './user.service';
@@ -39,6 +43,37 @@ export class UserController {
   async getUser(@Param('id') id: string) {
     const user = await this.userService.getUserById(id);
     return user;
+  }
+
+  @Post('checkPassword')
+  async checkPassword(
+    @Req() { user: { email } },
+    @Body() { password }: { password: string },
+  ) {
+    const userInfo = await this.userService.getUserByEmail(email);
+    const isCorrect = await bcrypt.compare(password, userInfo.password);
+    return { isCorrect };
+  }
+
+  @Post('changePassword')
+  async changePassword(
+    @Req() { user: { _id, email } },
+    @Body()
+    {
+      currentPassword,
+      newPassword,
+    }: { currentPassword: string; newPassword: string },
+  ) {
+    const userInfo = await this.userService.getUserByEmail(email);
+    const isCorrect = await bcrypt.compare(currentPassword, userInfo.password);
+    if (!isCorrect) {
+      throw new HttpException('비밀번호가 틀렸습니다', HttpStatus.BAD_REQUEST);
+    }
+    const passwordHashed = await bcrypt.hash(newPassword, 10);
+    const result = await this.userService.update(_id, {
+      password: passwordHashed,
+    });
+    return { isSuccess: !!result };
   }
 
   @Patch('image')
