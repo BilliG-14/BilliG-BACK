@@ -11,6 +11,7 @@ import { NoticeModule } from './notice/notice.module';
 import { LoggerMiddleware } from './logger/logger.middleware';
 import { ReportModule } from './report/report.module';
 import { HashtagModule } from './hashtag/hashtag.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { HashtagModule } from './hashtag/hashtag.module';
     CategoryModule,
     ReportModule,
     HashtagModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],
