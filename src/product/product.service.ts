@@ -126,12 +126,15 @@ export class ProductService {
       .findOne({ _id: id })
       .populate('hashtag');
 
-    targetProduct.hashtag.forEach((tag) =>
-      this.hashtagService.notUseHashtag(Object(tag).name),
-    );
-    const hashtagIds = await Promise.all(
-      hashtag.map(async (tag) => await this.hashtagService.useHashtag(tag)),
-    );
+    const changeHashtag = async (hashtag) => {
+      targetProduct.hashtag.forEach((tag) =>
+        this.hashtagService.notUseHashtag(Object(tag).name),
+      );
+      const hashtagIds = await Promise.all(
+        hashtag.map(async (tag) => await this.hashtagService.useHashtag(tag)),
+      );
+      return hashtagIds;
+    };
 
     const inputProduct = {
       ...(postType && { postType }),
@@ -146,7 +149,7 @@ export class ProductService {
       ...(address && { address }),
       ...(price && { price }),
       ...(period && { period }),
-      ...(hashtag && { hashtag: hashtagIds }),
+      ...(hashtag && { hashtag: changeHashtag(hashtag) }),
       ...(tradeWay && { tradeWay }),
     };
 
