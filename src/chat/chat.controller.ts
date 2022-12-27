@@ -47,6 +47,14 @@ export class ChatController {
 
   @Post()
   async createChat(@Req() { user }, @Body() body: { guest: string }) {
+    const chatExist = await this.chatService.getOneByUsers(
+      user._id,
+      body.guest,
+    );
+    if (chatExist) {
+      const { _id, guest } = chatExist.toObject();
+      return { _id, another: guest };
+    }
     const chat = await this.chatService.create({
       host: user._id,
       guest: body.guest,

@@ -22,12 +22,21 @@ export class ChatService {
     return chats.filter(({ host }) => !!host?.name);
   }
 
-  // async getManyByUserId(id: string) {
-  //   const chats = await this.chatModel
-  //     .find({ $or: [{ host: id }, { guest: id }] })
-  //     .populate('host guest', 'nickName name', User.name);
-  //   return chats;
-  // }
+  async getOneByUsers(reqUser: string, another: string) {
+    const chat = await this.chatModel
+      .findOne({
+        $or: [
+          { host: reqUser, guest: another },
+          { host: another, guest: reqUser },
+        ],
+      })
+      .populate<{ host: UserDocument; guest: UserDocument }>(
+        'host guest',
+        'nickName name',
+        User.name,
+      );
+    return chat.host?.name && chat.guest?.name ? chat : null;
+  }
 
   async getOneByChatId(_id: string) {
     const chat = await this.chatModel
