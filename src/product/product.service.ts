@@ -78,10 +78,11 @@ export class ProductService {
     } = createProduct;
 
     // hashtag 검색 후 등록
-    const hashtagIds = await Promise.all(
-      hashtag.map(async (tag) => await this.hashtagService.useHashtag(tag)),
-    );
-    const hashtagId = () => {};
+    const hashtagIds = async (hashtag) => {
+      return await Promise.all(
+        hashtag.map(async (tag) => await this.hashtagService.useHashtag(tag)),
+      );
+    };
 
     const inputProduct = {
       postType,
@@ -96,7 +97,7 @@ export class ProductService {
       address,
       price,
       period,
-      ...(hashtag && { hashtag: hashtagIds }),
+      ...(hashtag && { hashtag: await hashtagIds(hashtag) }),
       tradeWay,
     };
     const result = await this.productModel.create(inputProduct);
@@ -149,7 +150,7 @@ export class ProductService {
       ...(address && { address }),
       ...(price && { price }),
       ...(period && { period }),
-      ...(hashtag && { hashtag: changeHashtag(hashtag) }),
+      ...(hashtag && { hashtag: await changeHashtag(hashtag) }),
       ...(tradeWay && { tradeWay }),
     };
 
