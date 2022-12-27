@@ -42,7 +42,12 @@ export class ProductService {
       filter = { hashtag, ...rest };
     }
     return await this.productModel
-      .paginate(filter, {})
+      .paginate(filter, {
+        sort: { createdAt: -1 },
+        populate: ['category', 'hashtag'],
+        limit: per,
+        page,
+      })
       .catch((err) => err.message);
   }
 
