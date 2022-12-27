@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, PaginateModel } from 'mongoose';
 import { User } from 'src/user/schemas/user.schema';
 import { UpdateNoticeDTO } from './dto/updateNotice.dto';
 import { Notice, NoticeDocument } from './schemas/notice.schema';
@@ -8,13 +8,20 @@ import { Notice, NoticeDocument } from './schemas/notice.schema';
 @Injectable()
 export class NoticeService {
   constructor(
-    @InjectModel(Notice.name) private noticeModel: Model<NoticeDocument>,
+    @InjectModel(Notice.name)
+    private noticeModel: PaginateModel<NoticeDocument>,
   ) {}
 
-  async getNotices() {
-    const notices = await this.noticeModel
-      .find({}, { content: false }, { returnOriginal: false })
-      .populate('writer', 'name nickName', User.name);
+  async getNotices(per: number, page: number) {
+    const notices = await this.noticeModel.paginate(
+      {},
+      {
+        sort: { createdAt: -1 },
+        populate: ['writer'],
+        limit: per,
+        page,
+      },
+    );
     return notices;
   }
 

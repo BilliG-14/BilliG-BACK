@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory, SchemaOptions } from '@nestjs/mongoose';
 import { HydratedDocument, Schema as SchemaType } from 'mongoose';
 import { User } from 'src/user/schemas/user.schema';
+import * as mongoosePaginate from 'mongoose-paginate-v2';
 
 export type NoticeDocument = HydratedDocument<Notice>;
 
@@ -20,4 +21,6 @@ export class Notice {
   writer: SchemaType.Types.ObjectId;
 }
 
-export const NoticeSchema = SchemaFactory.createForClass(Notice);
+const schema = SchemaFactory.createForClass(Notice);
+schema.plugin(mongoosePaginate);
+export const NoticeSchema = schema;
