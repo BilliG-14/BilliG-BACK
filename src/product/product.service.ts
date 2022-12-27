@@ -5,7 +5,6 @@ import { CreateProductDTO } from './dto/createProduct.dto';
 import { UpdateProductDTO } from './dto/updateProduct.dto';
 import { postType } from './types/state.type';
 import { Product, ProductDocument } from './schemas/product.schema';
-import { paginate } from 'mongoose-paginate-v2';
 import { find } from 'rxjs';
 import { HashtagService } from 'src/hashtag/hashtag.service';
 import { handleRetry } from '@nestjs/mongoose/dist/common/mongoose.utils';
@@ -43,12 +42,7 @@ export class ProductService {
       filter = { hashtag, ...rest };
     }
     return await this.productModel
-      .paginate(filter, {
-        sort: { createdAt: -1 },
-        populate: ['category', 'hashtag'],
-        limit: per,
-        page,
-      })
+      .paginate(filter, {})
       .catch((err) => err.message);
   }
 
@@ -82,6 +76,7 @@ export class ProductService {
     const hashtagIds = await Promise.all(
       hashtag.map(async (tag) => await this.hashtagService.useHashtag(tag)),
     );
+    const hashtagId = () => {};
 
     const inputProduct = {
       postType,
@@ -96,7 +91,7 @@ export class ProductService {
       address,
       price,
       period,
-      hashtag: hashtagIds,
+      ...(hashtag && { hashtag: hashtagIds }),
       tradeWay,
     };
     const result = await this.productModel.create(inputProduct);

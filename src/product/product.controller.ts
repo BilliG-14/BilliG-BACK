@@ -85,12 +85,13 @@ export class ProductController {
     @Body() body: InputProductDTO,
     @UploadedFiles() images: Array<Express.MulterS3.File>,
   ) {
-    if (!images) {
-      throw new BadRequestException(
-        '이미지 저장을 시도하였으나, 첨부사진이 존재하지 않습니다.',
+    const result = [];
+    if (!images.length) {
+      //result.push(process.env.PRODUCT_DEFAULT_IMAGE);
+      result.push(
+        'https://billige.s3.ap-northeast-2.amazonaws.com/product_default.png',
       );
     }
-    const result = [];
     const inputData = JSON.parse(body.data);
     images.forEach((image) => result.push(image.location));
 
