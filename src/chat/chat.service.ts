@@ -35,7 +35,7 @@ export class ChatService {
         'nickName name',
         User.name,
       );
-    return chat.host?.name && chat.guest?.name ? chat : null;
+    return chat?.host?.name && chat?.guest?.name ? chat : null;
   }
 
   async getOneByChatId(_id: string) {
