@@ -21,7 +21,14 @@ export type ProductDocument = HydratedDocument<Product>;
 // 가격
 // 기간
 const options: SchemaOptions = {
-  timestamps: true,
+  timestamps: {
+    currentTime: () => {
+      const curr = new Date();
+      const KR_TIME_DIFF = 9 * 60 * 60 * 1000;
+      const kr_curr = new Date(curr.getTime() + KR_TIME_DIFF);
+      return kr_curr;
+    },
+  },
 };
 
 @Schema(options)
