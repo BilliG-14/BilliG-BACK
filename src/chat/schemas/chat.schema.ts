@@ -1,19 +1,15 @@
-import { Prop, Schema, SchemaFactory, SchemaOptions } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Schema as SchemaType } from 'mongoose';
 import { User } from 'src/user/schemas/user.schema';
 
-interface ChatInterface {
+export interface ChatInterface {
   name: string;
   message: string;
 }
 
 export type ChatDocument = HydratedDocument<Chat>;
 
-const options: SchemaOptions = {
-  timestamps: true,
-};
-
-@Schema(options)
+@Schema()
 export class Chat {
   @Prop({ type: SchemaType.Types.ObjectId, required: true, ref: User.name })
   host: string;

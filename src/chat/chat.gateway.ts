@@ -1,4 +1,5 @@
 import { Logger } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
 import {
   MessageBody,
   OnGatewayInit,
@@ -6,7 +7,9 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
+import { Model } from 'mongoose';
 import { Server } from 'socket.io';
+import { Chat, ChatDocument } from './schemas/chat.schema';
 
 @WebSocketGateway({
   namespace: 'chat',
@@ -17,6 +20,7 @@ import { Server } from 'socket.io';
 })
 export class ChatGateway implements OnGatewayInit {
   private readonly logger = new Logger();
+  constructor(@InjectModel(Chat.name) private chatModel: Model<ChatDocument>) {}
 
   afterInit() {
     this.logger.log('Websocket initialized');
@@ -33,7 +37,7 @@ export class ChatGateway implements OnGatewayInit {
   }
 
   @SubscribeMessage('send')
-  sendMessage(@MessageBody() data: string) {
+  async sendMessage(@MessageBody() data: string) {
     const [room, name, message] = data;
     this.logger.log(`${room}방 ${name}님의 메시지: ${message}`);
     this.server.emit(`message${room}`, { name, message });
