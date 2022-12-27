@@ -1,6 +1,5 @@
 import { Logger } from '@nestjs/common';
 import {
-  ConnectedSocket,
   MessageBody,
   OnGatewayInit,
   SubscribeMessage,
@@ -19,7 +18,7 @@ import { Server } from 'socket.io';
 export class ChatGateway implements OnGatewayInit {
   private readonly logger = new Logger();
 
-  afterInit(server: any) {
+  afterInit() {
     this.logger.log('Websocket initialized');
   }
 
@@ -27,16 +26,16 @@ export class ChatGateway implements OnGatewayInit {
   server: Server;
 
   @SubscribeMessage('enter')
-  connectSomeone(@MessageBody() data: string, @ConnectedSocket() client) {
+  connectSomeone(@MessageBody() data: string) {
     const [nickname, room] = data;
     this.logger.log(`${nickname}님이 코드: ${room}방에 접속했습니다.`);
-    client.emit(`enter${room}`, `${nickname}님이 입장했습니다.`);
+    this.server.emit(`enter${room}`, `${nickname}님이 입장했습니다.`);
   }
 
   @SubscribeMessage('send')
-  sendMessage(@MessageBody() data: string, @ConnectedSocket() client) {
+  sendMessage(@MessageBody() data: string) {
     const [room, name, message] = data;
     this.logger.log(`${room}방 ${name}님의 메시지: ${message}`);
-    client.emit(`message${room}`, { name, message });
+    this.server.emit(`message${room}`, { name, message });
   }
 }

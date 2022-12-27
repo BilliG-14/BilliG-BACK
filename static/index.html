@@ -19,7 +19,9 @@
     ></script>
 
     <script>
-      const socket = io('ws://localhost:8080/chat');
+      const socket = io('http://34.64.44.34:3003/chat', {
+        transports: ['websocket'],
+      });
       const nickname = prompt('닉네임을 알려주세요.');
       if (!nickname) {
         window.location.reload();
