@@ -39,6 +39,10 @@ export class ChatGateway implements OnGatewayInit {
   @SubscribeMessage('send')
   async sendMessage(@MessageBody() data: string) {
     const [room, name, message] = data;
+    await this.chatModel.updateOne(
+      { _id: room },
+      { $push: { chats: { name, message } } },
+    );
     this.logger.log(`${room}방 ${name}님의 메시지: ${message}`);
     this.server.emit(`message${room}`, { name, message });
   }
