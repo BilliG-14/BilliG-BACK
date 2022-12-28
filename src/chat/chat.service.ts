@@ -10,14 +10,14 @@ export class ChatService {
 
   async getManyAtHost(id: string) {
     const chats = await this.chatModel
-      .find({ host: id })
+      .find({ host: id }, { chats: false })
       .populate<{ guest: UserDocument }>('guest', 'name nickName', User.name);
     return chats.filter(({ guest }) => !!guest?.name);
   }
 
   async getManyAtGuest(id: string) {
     const chats = await this.chatModel
-      .find({ guest: id })
+      .find({ guest: id }, { chats: false })
       .populate<{ host: UserDocument }>('host', 'name nickName', User.name);
     return chats.filter(({ host }) => !!host?.name);
   }
