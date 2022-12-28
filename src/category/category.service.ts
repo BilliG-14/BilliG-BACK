@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ProductService } from 'src/product/product.service';
@@ -35,13 +35,14 @@ export class CategoryService {
         category: _id,
       })
     ).length;
-    try {
-      if (existProduct) {
-        throw Error('해당 카테고리를 사용하는 제품이 존재합니다.');
-      }
+
+    if (existProduct) {
+      throw new HttpException(
+        '해당 카테고리를 사용하는 제품이 존재합니다.',
+        HttpStatus.BAD_REQUEST,
+      );
+    } else {
       return await this.categoryModel.findOneAndDelete({ _id: _id });
-    } catch (e) {
-      return e.message;
     }
   }
 }

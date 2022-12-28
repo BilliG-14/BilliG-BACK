@@ -17,14 +17,11 @@ export class HashtagService {
   // 단순 해시태그 검색
   async findHashtag(name: string) {
     const registeredTag = await this.hashtagModel.findOne({ name });
-    try {
-      if (registeredTag._id) {
-        return registeredTag._id;
-      } else {
-        throw Error('해당 해시태그가 존재하지 않습니다.');
-      }
-    } catch (e) {
-      return e.message;
+    console.log(`registeredTag : ${registeredTag}`);
+    if (registeredTag) {
+      return registeredTag._id;
+    } else {
+      return false;
     }
   }
 
