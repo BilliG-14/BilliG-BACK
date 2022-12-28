@@ -32,13 +32,14 @@ export class ProductService {
       const tags = hashtag.split(',');
       const tagIds = await Promise.all(
         tags.map(
-          async (tag: string) =>
-            await this.hashtagService
-              .findHashtag(tag)
-              .catch((err) => err.message),
+          async (tag: string) => await this.hashtagService.findHashtag(tag),
         ),
       );
-      hashtag = { $all: tagIds };
+      const validtagIds = tagIds.filter((tag) => {
+        return !!tag;
+      });
+      console.log(validtagIds);
+      hashtag = { $all: validtagIds };
       filter = { hashtag, ...rest };
     }
     return await this.productModel
