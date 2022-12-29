@@ -11,7 +11,7 @@ export class NoticeService {
     @InjectModel(Notice.name)
     private noticeModel: PaginateModel<NoticeDocument>,
     @InjectModel(User.name)
-    private userModel: Model<UserDocument>,
+    private readonly userModel: Model<UserDocument>,
   ) {}
 
   async getNotices(per: number, page: number) {
