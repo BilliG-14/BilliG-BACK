@@ -15,7 +15,15 @@ import { Chat, ChatDocument } from './schemas/chat.schema';
   namespace: 'chat',
   transports: ['websocket', 'polling'],
   cors: {
-    origin: '*',
+    origin: [
+      'http://localhost:3000',
+      'https://billig.vercel.app',
+      'https://billig-v3.vercel.app',
+      'http://kdt-sw3-team14.elicecoding.com',
+      'https://kdt-sw3-team14.elicecoding.com',
+    ],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
   },
 })
 export class ChatGateway implements OnGatewayInit {
