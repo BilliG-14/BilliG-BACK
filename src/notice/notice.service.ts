@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, PaginateModel } from 'mongoose';
-import { User } from 'src/user/schemas/user.schema';
+import { User, UserDocument } from 'src/user/schemas/user.schema';
 import { UpdateNoticeDTO } from './dto/updateNotice.dto';
 import { Notice, NoticeDocument } from './schemas/notice.schema';
 
@@ -10,6 +10,8 @@ export class NoticeService {
   constructor(
     @InjectModel(Notice.name)
     private noticeModel: PaginateModel<NoticeDocument>,
+    @InjectModel(User.name)
+    private userModel: Model<UserDocument>,
   ) {}
 
   async getNotices(per: number, page: number) {
@@ -33,8 +35,17 @@ export class NoticeService {
   }
 
   async create(noticeInfo: Notice) {
-    const notice = new this.noticeModel(noticeInfo);
-    return notice.save();
+    const { writer } = noticeInfo;
+    const user = await this.userModel.findOne(
+      { _id: writer },
+      { password: false },
+    );
+    if (user.role == 'admin') {
+      const notice = new this.noticeModel(noticeInfo);
+      return notice.save();
+    } else {
+      return '글 작성 권한이 없습니다.';
+    }
   }
 
   async update(noticeId: string, userId: string, noticeInfo: UpdateNoticeDTO) {
