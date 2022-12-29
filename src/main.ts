@@ -17,7 +17,13 @@ async function bootstrap() {
   );
 
   app.enableCors({
-    origin: true,
+    origin: [
+      'http://localhost:3000',
+      'https://billig.vercel.app',
+      'https://billig-v3.vercel.app',
+      'http://kdt-sw3-team14.elicecoding.com',
+      'https://kdt-sw3-team14.elicecoding.com',
+    ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
