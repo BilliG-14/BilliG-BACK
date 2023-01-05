@@ -9,6 +9,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
@@ -24,6 +25,7 @@ import { S3Client } from '@aws-sdk/client-s3';
 import { FindProductDTO } from './dto/findProduct.dto';
 import { parse } from 'path';
 import { InputProductDTO } from './dto/inputProduct.dto';
+import * as qs from 'qs';
 
 const s3 = new S3Client({
   region: 'ap-northeast-2', // 환경변수로 선언하면 값을 못 읽어오는 문제 있음. 왜 ?????
@@ -37,11 +39,22 @@ const s3 = new S3Client({
 export class ProductController {
   constructor(readonly productService: ProductService) {}
 
-  // 게시물 가져오기 (유저별 / 게시물 타입 별)
+  @Get('page') // product?user=XXXX&postType=lend
+  async getProductsByPage(
+    // @Query('per') per: number,
+    // @Query('page') page: number,
+    @Req() req,
+    //@Query() query: FindProductDTO,
+  ) {
+    const queries = qs.parse(req.query);
+    const { per, page, ...filter } = queries;
+    return await this.productService.findProductsByPage(per, page, filter);
+  }
+
+  //게시물 가져오기 (유저별 / 게시물 타입 별)
   @Get() // product?user=XXXX&postType=lend
-  async getProductsByUser(@Body() body: FindProductDTO) {
-    console.log('passed');
-    return await this.productService.findProducts(body);
+  async getProducts(@Query() query: FindProductDTO) {
+    return await this.productService.findProducts(query);
   }
 
   // 특정 게시물 정보 가져오기
@@ -72,12 +85,13 @@ export class ProductController {
     @Body() body: InputProductDTO,
     @UploadedFiles() images: Array<Express.MulterS3.File>,
   ) {
-    if (!images) {
-      throw new BadRequestException(
-        '이미지 저장을 시도하였으나, 첨부사진이 존재하지 않습니다.',
+    const result = [];
+    if (!images.length) {
+      //result.push(process.env.PRODUCT_DEFAULT_IMAGE);
+      result.push(
+        'https://billige.s3.ap-northeast-2.amazonaws.com/product_default.png',
       );
     }
-    const result = [];
     const inputData = JSON.parse(body.data);
     images.forEach((image) => result.push(image.location));
 

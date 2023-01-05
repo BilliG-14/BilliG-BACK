@@ -1,20 +1,29 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { User } from 'src/user/schemas/user.schema';
+import { Model, PaginateModel } from 'mongoose';
+import { User, UserDocument } from 'src/user/schemas/user.schema';
 import { UpdateNoticeDTO } from './dto/updateNotice.dto';
 import { Notice, NoticeDocument } from './schemas/notice.schema';
 
 @Injectable()
 export class NoticeService {
   constructor(
-    @InjectModel(Notice.name) private noticeModel: Model<NoticeDocument>,
+    @InjectModel(Notice.name)
+    private noticeModel: PaginateModel<NoticeDocument>,
+    @InjectModel(User.name)
+    private readonly userModel: Model<UserDocument>,
   ) {}
 
-  async getNotices() {
-    const notices = await this.noticeModel
-      .find({}, { content: false }, { returnOriginal: false })
-      .populate('writer', 'name nickName', User.name);
+  async getNotices(per: number, page: number) {
+    const notices = await this.noticeModel.paginate(
+      {},
+      {
+        sort: { createdAt: -1 },
+        populate: ['writer'],
+        limit: per,
+        page,
+      },
+    );
     return notices;
   }
 
@@ -26,8 +35,17 @@ export class NoticeService {
   }
 
   async create(noticeInfo: Notice) {
-    const notice = new this.noticeModel(noticeInfo);
-    return notice.save();
+    const { writer } = noticeInfo;
+    const user = await this.userModel.findOne(
+      { _id: writer },
+      { password: false },
+    );
+    if (user.role == 'admin') {
+      const notice = new this.noticeModel(noticeInfo);
+      return notice.save();
+    } else {
+      return '글 작성 권한이 없습니다.';
+    }
   }
 
   async update(noticeId: string, userId: string, noticeInfo: UpdateNoticeDTO) {

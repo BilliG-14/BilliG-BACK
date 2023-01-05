@@ -2,9 +2,8 @@ import {
   Body,
   Controller,
   Get,
-  // HttpException,
-  // HttpStatus,
-  Logger,
+  HttpException,
+  HttpStatus,
   Post,
   Req,
   Res,
@@ -41,19 +40,27 @@ export class AppController {
     const { access, refresh } = this.authService.createToken({
       id: user._id,
     });
-    response.setHeader('Set-Cookie', `refresh=${refresh}`);
+    response.cookie('refresh', refresh, {
+      sameSite: 'none',
+      secure: true,
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 1,
+    });
     return response.send({ ...user, token: access });
+  }
+
+  @Post('logout')
+  async logoutUser(@Res() response) {
+    response.clearCookie('refresh');
+    return response.send({});
   }
 
   @Get('refresh')
   async refreshUser(@Req() request, @Res() response) {
-    const logger = new Logger();
     const cookies = request?.cookies?.refresh;
-    logger.log(request.cookies);
-    logger.log(cookies);
-    // if (!cookies) {
-    //   throw new HttpException('토큰이 없습니다', HttpStatus.UNAUTHORIZED);
-    // }
+    if (!cookies) {
+      throw new HttpException('토큰이 없습니다', HttpStatus.BAD_REQUEST);
+    }
 
     const jwtDecoded = jwt.verify(
       cookies,
@@ -62,7 +69,18 @@ export class AppController {
 
     const id = (<{ id: string }>jwtDecoded).id;
     const { access, refresh } = this.authService.createToken({ id });
-    response.setHeader('Set-Cookie', `refresh=${refresh}`);
+    response.cookie('refresh', refresh, {
+      sameSite: 'none',
+      secure: true,
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 1,
+    });
     return response.send({ userId: id, token: access });
+  }
+
+  @Post('checkEmail')
+  async checkEmail(@Body() { email }: { email: string }) {
+    const user = await this.authService.checkUserEmail(email);
+    return { userId: user ? user._id : null };
   }
 }

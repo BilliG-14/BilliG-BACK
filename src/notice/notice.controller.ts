@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -19,8 +20,8 @@ export class NoticeController {
   constructor(readonly noticeService: NoticeService) {}
 
   @Get()
-  async getNotices() {
-    const notices = await this.noticeService.getNotices();
+  async getNotices(@Query('per') per: number, @Query('page') page: number) {
+    const notices = await this.noticeService.getNotices(per, page);
     return notices;
   }
 

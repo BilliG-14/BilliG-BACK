@@ -36,4 +36,12 @@ export class UpdateUserDTO {
   @IsOptional()
   @IsString()
   readonly image?: string;
+
+  @IsOptional()
+  @IsString()
+  readonly intro?: string;
+
+  @IsOptional()
+  @IsString()
+  readonly password?: string;
 }
