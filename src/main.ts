@@ -2,27 +2,31 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.use(cookieParser());
   app.useGlobalPipes(
+    //class-validation 을 사용하기 위한 등록
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
+      transform: true,
       forbidUnknownValues: false,
     }),
   );
 
-  app.use(cookieParser());
-  const config = new DocumentBuilder()
-    .setTitle('docs')
-    .setDescription('')
-    .setVersion('1.0')
-    .addTag('village')
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  app.enableCors({
+    origin: [
+      'http://localhost:3000',
+      'https://billig.vercel.app',
+      'https://billig-v3.vercel.app',
+      'http://kdt-sw3-team14.elicecoding.com',
+      'https://kdt-sw3-team14.elicecoding.com',
+    ],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+  });
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

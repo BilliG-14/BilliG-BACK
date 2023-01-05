@@ -2,19 +2,20 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
+  HttpStatus,
   Post,
   Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiResponse } from '@nestjs/swagger';
+import * as jwt from 'jsonwebtoken';
 import { AppService } from './app.service';
 import { AuthService } from './auth/auth.service';
 import { RegisterUserDTO } from './auth/dto/registerUser.dto';
 import { LocalAuthGuard } from './auth/guard/local-auth.guard';
 
 @Controller()
-@ApiTags('가입 및 로그인 API')
 export class AppController {
   constructor(
     private readonly appService: AppService,
@@ -27,7 +28,6 @@ export class AppController {
   }
 
   @Post('register')
-  @ApiResponse({ type: RegisterUserDTO })
   async registerUser(@Body() userInfo: RegisterUserDTO) {
     const createdUser = await this.authService.creatUserHashed(userInfo);
     return createdUser;
@@ -35,13 +35,52 @@ export class AppController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  // @ApiResponse({ type: { email: String } })
   async loginUser(@Req() requestWithUser, @Res() response) {
     const { user } = requestWithUser;
     const { access, refresh } = this.authService.createToken({
       id: user._id,
     });
-    response.setHeader('Set-Cookie', refresh);
+    response.cookie('refresh', refresh, {
+      sameSite: 'none',
+      secure: true,
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 1,
+    });
     return response.send({ ...user, token: access });
+  }
+
+  @Post('logout')
+  async logoutUser(@Res() response) {
+    response.clearCookie('refresh');
+    return response.send({});
+  }
+
+  @Get('refresh')
+  async refreshUser(@Req() request, @Res() response) {
+    const cookies = request?.cookies?.refresh;
+    if (!cookies) {
+      throw new HttpException('토큰이 없습니다', HttpStatus.BAD_REQUEST);
+    }
+
+    const jwtDecoded = jwt.verify(
+      cookies,
+      process.env.JWT_SECRETKEY ?? 'secretkey',
+    );
+
+    const id = (<{ id: string }>jwtDecoded).id;
+    const { access, refresh } = this.authService.createToken({ id });
+    response.cookie('refresh', refresh, {
+      sameSite: 'none',
+      secure: true,
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 1,
+    });
+    return response.send({ userId: id, token: access });
+  }
+
+  @Post('checkEmail')
+  async checkEmail(@Body() { email }: { email: string }) {
+    const user = await this.authService.checkUserEmail(email);
+    return { userId: user ? user._id : null };
   }
 }
