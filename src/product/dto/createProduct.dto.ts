@@ -10,7 +10,6 @@ import {
 import { postType, stateOfTransaction } from '../types/state.type';
 
 export class CreateProductDTO {
-  @IsOptional()
   postType: postType;
 
   @IsString()
@@ -23,35 +22,36 @@ export class CreateProductDTO {
   title: string;
 
   @IsString()
-  contents: string;
+  description: string;
 
   @IsOptional()
+  @IsArray()
   imgUrl: string[];
 
   @IsOptional()
+  @IsString()
   lender: string;
 
   @IsOptional()
+  @IsString()
   borrower: string;
 
-  @IsString()
-  stateOfTransaction: string;
+  @IsNumber()
+  stateOfTransaction: stateOfTransaction;
 
   @IsString()
   address: string;
 
-  @IsString()
-  price: string;
+  @IsObject()
+  price: object;
 
-  @IsString()
-  period: string;
+  @IsOptional()
+  @IsObject()
+  period: object;
 
-  @IsString()
-  hashtag: string;
+  @IsObject()
+  tradeWay: object;
 
-  @IsString()
-  delivery: string;
-
-  @IsString()
-  direct: string;
+  @IsArray()
+  hashtag: string[];
 }

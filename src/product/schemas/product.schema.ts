@@ -1,8 +1,9 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory, SchemaOptions } from '@nestjs/mongoose';
 import { IsString } from 'class-validator';
 import { HydratedDocument, Schema as MongooseSchema, Types } from 'mongoose';
 import { Category } from 'src/category/schemas/category.schema';
 import { postType, stateOfTransaction } from '../types/state.type';
+import * as mongoosePaginate from 'mongoose-paginate-v2';
 
 export type ProductDocument = HydratedDocument<Product>;
 
@@ -19,8 +20,18 @@ export type ProductDocument = HydratedDocument<Product>;
 // 주소
 // 가격
 // 기간
+const options: SchemaOptions = {
+  timestamps: {
+    currentTime: () => {
+      const curr = new Date();
+      const KR_TIME_DIFF = 9 * 60 * 60 * 1000;
+      const kr_curr = new Date(curr.getTime() + KR_TIME_DIFF);
+      return kr_curr;
+    },
+  },
+};
 
-@Schema()
+@Schema(options)
 export class Product {
   @Prop({ required: false })
   postType: postType;
@@ -28,23 +39,23 @@ export class Product {
   @Prop({ required: true, type: Types.ObjectId, ref: 'Category' })
   category: Category;
 
-  @Prop({ required: true })
+  @Prop({ required: true, type: Types.ObjectId, ref: 'User' })
   author: string;
 
   @Prop({ required: true })
   title: string;
 
   @Prop({ required: true })
-  contents: string;
+  description: string;
 
   @Prop({ required: false })
   imgUrl: string[];
 
   // 빌려주는사람, 빌리는사람 은 유저데이터와 populate 시켜야 함
-  @Prop({ required: false })
+  @Prop({ type: Types.ObjectId, ref: 'User' })
   lender: string;
 
-  @Prop({ required: false })
+  @Prop({ type: Types.ObjectId, ref: 'User' })
   borrower: string;
 
   @Prop({ required: true })
@@ -53,20 +64,19 @@ export class Product {
   @Prop({ required: true })
   address: string;
 
-  @Prop({ required: true })
-  price: number;
+  @Prop({ required: true, type: Object })
+  price: object;
 
-  @Prop({ required: true })
-  period: string;
+  @Prop({ required: true, type: Object })
+  period: object;
 
-  @Prop({ required: true })
+  @Prop({ type: [Types.ObjectId], ref: 'Hashtag' })
   hashtag: string[];
 
-  @Prop({ required: true })
-  delivery: boolean;
-
-  @Prop({ required: true })
-  direct: boolean;
+  @Prop({ required: true, type: Object })
+  tradeWay: object;
 }
 
-export const ProductSchema = SchemaFactory.createForClass(Product);
+const schema = SchemaFactory.createForClass(Product);
+schema.plugin(mongoosePaginate);
+export const ProductSchema = schema;

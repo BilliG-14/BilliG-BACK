@@ -1,4 +1,4 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 export class UpdateUserDTO {
   @IsOptional()
@@ -28,4 +28,20 @@ export class UpdateUserDTO {
   @IsOptional()
   @IsString()
   readonly address2?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  readonly suspension?: boolean;
+
+  @IsOptional()
+  @IsString()
+  readonly image?: string;
+
+  @IsOptional()
+  @IsString()
+  readonly intro?: string;
+
+  @IsOptional()
+  @IsString()
+  readonly password?: string;
 }

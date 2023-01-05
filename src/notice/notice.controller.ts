@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -19,8 +20,8 @@ export class NoticeController {
   constructor(readonly noticeService: NoticeService) {}
 
   @Get()
-  async getNotices() {
-    const notices = await this.noticeService.getNotices();
+  async getNotices(@Query('per') per: number, @Query('page') page: number) {
+    const notices = await this.noticeService.getNotices(per, page);
     return notices;
   }
 
@@ -41,9 +42,14 @@ export class NoticeController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Patch()
-  async updateNotice(@Req() request, @Body() noticeInfo: UpdateNoticeDTO) {
+  @Patch(':id')
+  async updateNotice(
+    @Req() request,
+    @Param('id') id: string,
+    @Body() noticeInfo: UpdateNoticeDTO,
+  ) {
     const notice = await this.noticeService.update(
+      id,
       request.user._id,
       noticeInfo,
     );
@@ -51,8 +57,8 @@ export class NoticeController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete()
-  async deleteNotice(@Body() { id }: { id: string }) {
+  @Delete(':id')
+  async deleteNotice(@Param('id') id: string) {
     await this.noticeService.delete(id);
   }
 }
