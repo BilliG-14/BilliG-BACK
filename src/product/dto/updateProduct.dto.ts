@@ -9,39 +9,43 @@ import {
 } from 'class-validator';
 import { postType, stateOfTransaction } from '../types/state.type';
 
-export class CreateProductDTO {
+export class UpdateProductDTO {
+  @IsOptional()
   postType: postType;
 
+  @IsOptional()
   @IsString()
   category: string;
 
+  @IsOptional()
   @IsString()
   author: string;
 
+  @IsOptional()
   @IsString()
   title: string;
 
+  @IsOptional()
   @IsString()
   description: string;
 
   @IsOptional()
-  @IsArray()
   imgUrl: string[];
 
   @IsOptional()
-  @IsString()
   lender: string;
 
   @IsOptional()
-  @IsString()
   borrower: string;
 
-  @IsNumber()
+  @IsOptional()
   stateOfTransaction: stateOfTransaction;
 
+  @IsOptional()
   @IsString()
   address: string;
 
+  @IsOptional()
   @IsObject()
   price: object;
 
@@ -49,9 +53,11 @@ export class CreateProductDTO {
   @IsObject()
   period: object;
 
+  @IsOptional()
   @IsObject()
   tradeWay: object;
 
+  @IsOptional()
   @IsArray()
   hashtag: string[];
 }
