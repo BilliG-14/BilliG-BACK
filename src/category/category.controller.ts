@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -37,6 +39,14 @@ export class CategoryController {
 
   @Delete('/:id')
   async deleteCategory(@Param('id') _id: string) {
-    return this.categoryService.deleteCategory(_id);
+    try {
+      const result = this.categoryService.deleteCategory(_id);
+      return result;
+    } catch (e) {
+      throw new HttpException(
+        '해당 카테고리를 사용하는 제품이 존재합니다.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }

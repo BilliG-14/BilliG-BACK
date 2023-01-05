@@ -17,25 +17,49 @@ export class ChatController {
 
   @Get()
   async getChatsByUser(@Req() { user: { _id } }) {
-    const chats = await this.chatService.getManyByUserId(_id);
-    return chats;
+    const chatsAtHost = await this.chatService.getManyAtHost(_id);
+    const chatsAtGuest = await this.chatService.getManyAtGuest(_id);
+    return [
+      ...chatsAtHost.map(({ _id, guest, chats }) => ({
+        _id,
+        another: guest,
+        chats,
+      })),
+      ...chatsAtGuest.map(({ _id, host, chats }) => ({
+        _id,
+        another: host,
+        chats,
+      })),
+    ];
   }
 
   @Get(':id')
-  async getChatById(@Param('id') id: string) {
+  async getChatById(@Param('id') id: string, @Req() { user: { _id } }) {
     const chat = await this.chatService.getOneByChatId(id);
-    return chat;
+    if (chat?.host?._id.toString() === _id.toString()) {
+      const { _id, guest, chats } = chat.toObject();
+      return { _id, another: guest, chats };
+    } else {
+      const { _id, host, chats } = chat.toObject();
+      return { _id, another: host, chats };
+    }
   }
 
   @Post()
-  async createChat(
-    @Req() { user: { _id } },
-    @Body() { guest }: { guest: string },
-  ) {
+  async createChat(@Req() { user }, @Body() body: { guest: string }) {
+    const chatExist = await this.chatService.getOneByUsers(
+      user._id,
+      body.guest,
+    );
+    if (chatExist) {
+      const { _id, guest } = chatExist.toObject();
+      return { _id, another: guest };
+    }
     const chat = await this.chatService.create({
-      host: _id,
-      guest: guest,
+      host: user._id,
+      guest: body.guest,
     });
-    return chat;
+    const { _id, guest } = chat.toObject();
+    return { _id, another: guest };
   }
 }

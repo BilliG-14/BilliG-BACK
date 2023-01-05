@@ -49,6 +49,12 @@ export class AppController {
     return response.send({ ...user, token: access });
   }
 
+  @Post('logout')
+  async logoutUser(@Res() response) {
+    response.clearCookie('refresh');
+    return response.send({});
+  }
+
   @Get('refresh')
   async refreshUser(@Req() request, @Res() response) {
     const cookies = request?.cookies?.refresh;

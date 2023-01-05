@@ -15,6 +15,6 @@ import { Category, CategorySchema } from './schemas/category.schema';
     MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }]),
   ],
   controllers: [CategoryController],
-  providers: [CategoryService, ProductService],
+  providers: [CategoryService],
 })
 export class CategoryModule {}
