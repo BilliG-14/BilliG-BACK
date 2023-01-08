@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Post,
+  Patch,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -37,11 +38,11 @@ export class ChatController {
   async getChatById(@Param('id') id: string, @Req() { user: { _id } }) {
     const chat = await this.chatService.getOneByChatId(id);
     if (chat?.host?._id.toString() === _id.toString()) {
-      const { _id, guest, chats } = chat.toObject();
-      return { _id, another: guest, chats };
+      const { _id, guest, chats, old_chats } = chat.toObject();
+      return { _id, another: guest, chats, old_chats };
     } else {
-      const { _id, host, chats } = chat.toObject();
-      return { _id, another: host, chats };
+      const { _id, host, chats, old_chats } = chat.toObject();
+      return { _id, another: host, chats, old_chats };
     }
   }
 
@@ -61,5 +62,18 @@ export class ChatController {
     });
     const { _id, guest } = chat.toObject();
     return { _id, another: guest };
+  }
+
+  @Patch(':id')
+  async updateChat(
+    @Req() { user },
+    @Param('id') id: string,
+    @Body() body: { guest: string },
+  ) {
+    const chat = await this.chatService.update({
+      host: user._id,
+      guest: body.guest,
+    });
+    return chat;
   }
 }

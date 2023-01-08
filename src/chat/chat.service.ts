@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from 'src/user/schemas/user.schema';
-import { Chat, ChatDocument } from './schemas/chat.schema';
+import { Chat, ChatDocument, ChatInterface } from './schemas/chat.schema';
 
 @Injectable()
 export class ChatService {
@@ -57,5 +57,23 @@ export class ChatService {
   async create(chatInfo: Chat) {
     const chat = await this.chatModel.create(chatInfo);
     return chat;
+  }
+
+  async update(chatInfo: Chat) {
+    const chat = await this.chatModel
+      .findOneAndUpdate(chatInfo, {
+        returnOriginal: false,
+      })
+      .populate<{ host: UserDocument; guest: UserDocument }>(
+        'host guest',
+        'nickName name',
+        User.name,
+      );
+
+    if (chat.host?.name && chat.guest?.name) {
+      return chat;
+    } else {
+      throw new HttpException('유저가 없습니다', HttpStatus.NOT_FOUND);
+    }
   }
 }

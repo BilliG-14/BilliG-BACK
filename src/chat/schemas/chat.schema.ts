@@ -19,6 +19,9 @@ export class Chat {
 
   @Prop({ type: [{ name: String, message: String }], default: [] })
   chats?: ChatInterface[];
+
+  @Prop({ type: [{ name: String, message: String }], default: [] })
+  old_chats?: ChatInterface[];
 }
 
 export const ChatSchema = SchemaFactory.createForClass(Chat);
