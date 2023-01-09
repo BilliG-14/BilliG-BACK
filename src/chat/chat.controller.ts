@@ -66,17 +66,10 @@ export class ChatController {
 
   @Patch(':id')
   async updateChat(
-    @Req() { user },
     @Param('id') id: string,
     @Body() body: { guest: string; chats: ChatInterface[] },
   ) {
-    console.log('body는요... : ', body);
-    const chat = await this.chatService.update({
-      host: user._id,
-      guest: body.guest,
-      chats: body.chats,
-      old_chats: body.chats,
-    });
+    const chat = await this.chatService.update(id, body.chats);
     return chat;
   }
 }
