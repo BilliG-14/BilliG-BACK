@@ -60,8 +60,10 @@ export class ChatService {
   }
 
   async update(chatInfo: Chat) {
+    const chatInfoId = { host: chatInfo.host, guest: chatInfo.guest };
+    console.log('chatInfo 는요... : ', chatInfo);
     const chat = await this.chatModel
-      .findOneAndUpdate(chatInfo, {
+      .findOneAndUpdate(chatInfoId, {
         returnOriginal: false,
       })
       .populate<{ host: UserDocument; guest: UserDocument }>(
@@ -70,6 +72,7 @@ export class ChatService {
         User.name,
       );
 
+    console.log('chat 은요... : ', chat);
     if (chat.host?.name && chat.guest?.name) {
       return chat;
     } else {
