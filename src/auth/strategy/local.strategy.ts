@@ -22,7 +22,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException();
     }
     if (user.suspension) {
-      throw new HttpException('이용 정지된 유저 입니다', HttpStatus.FORBIDDEN);
+      throw new HttpException('이용 정지된 유저 입니다', 499);
     }
     return user;
   }
