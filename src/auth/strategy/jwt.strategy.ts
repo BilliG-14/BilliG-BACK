@@ -17,7 +17,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload: TokenPayload) {
     const user = await this.userService.getUserById(payload.id);
     if (user.suspension) {
-      throw new HttpException('이용 정지된 유저 입니다', HttpStatus.FORBIDDEN);
+      throw new HttpException('이용 정지된 유저 입니다', 499);
     }
     return user;
   }

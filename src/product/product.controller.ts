@@ -71,11 +71,11 @@ export class ProductController {
       storage: multerS3({
         s3: s3,
         bucket: 'billige',
-        key(_req, file, done) {
-          const ext = path.extname(file.originalname); //확장자
-          const basename = path.basename(file.originalname, ext); //파일명
+        key(_req, file, saveFile) {
+          const namedExtension = path.extname(file.originalname); //확장자
+          const namedFile = path.basename(file.originalname, namedExtension); //파일명
           // 파일 이름을 : '날짜_파일이름.확장자' 형식으로 설정.
-          done(null, `${Date.now()}_${basename}${ext}`);
+          saveFile(null, `${Date.now()}_${namedFile}${namedExtension}`);
         },
       }),
       limits: {}, //  fileSize: 10 * 1024 * 1024     10MB
@@ -85,6 +85,7 @@ export class ProductController {
     @Body() body: InputProductDTO,
     @UploadedFiles() images: Array<Express.MulterS3.File>,
   ) {
+    //
     const result = [];
     if (!images.length) {
       //result.push(process.env.PRODUCT_DEFAULT_IMAGE);
@@ -92,13 +93,27 @@ export class ProductController {
         'https://billige.s3.ap-northeast-2.amazonaws.com/product_default.png',
       );
     }
+    //
     const inputData = JSON.parse(body.data);
+    //
     images.forEach((image) => result.push(image.location));
-
+    //
     return await this.productService.createProduct({
       ...inputData,
       imgUrl: result,
     });
+  }
+
+  // 인풋을 받아서 포스팅하는 함수
+  // 이미지가 있는지 확인하는 함수
+  // 이미지를 받아서 이미지주소를 넣을 배열에 하나씩 대입하는 함수
+
+  isThereImgs(images) {
+    return !images.length ? true : false;
+  }
+
+  inputImagesToArray(images) {
+    this.isThereImgs(images);
   }
 
   // 특정 게시물 수정하기
@@ -107,12 +122,17 @@ export class ProductController {
     @Param('id') productId: string,
     @Body() body: UpdateProductDTO,
   ) {
-    return await this.productService.updateProduct(productId, body);
+    const patchedProduct = await this.productService.updateProduct(
+      productId,
+      body,
+    );
+    return patchedProduct;
   }
 
   // 특정 게시물 삭제하기
   @Delete('/:id')
   async deleteProduct(@Param('id') productId: string) {
-    return this.productService.deleteProduct(productId);
+    const deletedProduct = await this.productService.deleteProduct(productId);
+    return deletedProduct;
   }
 }

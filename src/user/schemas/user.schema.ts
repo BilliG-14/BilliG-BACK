@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory, SchemaOptions } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
+import { Report } from 'src/report/schemas/report.schema';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -39,6 +40,9 @@ export class User {
       'https://billige.s3.ap-northeast-2.amazonaws.com/1671781855513_defaulUser.png',
   })
   image?: string;
+
+  @Prop({ type: [Types.ObjectId], ref: 'Report' })
+  reports?: Types.ObjectId[];
 
   @Prop({ type: Boolean, default: false })
   suspension?: boolean;

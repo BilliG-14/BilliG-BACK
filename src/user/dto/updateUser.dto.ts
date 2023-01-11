@@ -31,6 +31,10 @@ export class UpdateUserDTO {
 
   @IsOptional()
   @IsBoolean()
+  readonly reports?: string;
+
+  @IsOptional()
+  @IsBoolean()
   readonly suspension?: boolean;
 
   @IsOptional()
