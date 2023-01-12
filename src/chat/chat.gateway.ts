@@ -11,8 +11,7 @@ import { Model } from 'mongoose';
 import { Server } from 'socket.io';
 import { Chat, ChatDocument } from './schemas/chat.schema';
 
-@WebSocketGateway({
-  port: 443,
+@WebSocketGateway(443,{
   namespace: 'chat',
   transports: ['websocket', 'polling'],
   cors: {
