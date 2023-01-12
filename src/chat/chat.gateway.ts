@@ -54,4 +54,18 @@ export class ChatGateway implements OnGatewayInit {
     this.logger.log(`${room}방 ${name}님의 메시지: ${message}`);
     this.server.emit(`message${room}`, { name, message });
   }
+
+  @SubscribeMessage('leave-room')
+  async addOldMessage(@MessageBody() data: any) {
+    const [room, message] = data;
+    // await this.chatModel.updateOne(
+    //   { _id: room },
+    //   { $push: { old_chats: message } },
+    // );
+    // this.logger.log(`${room}방의 old 메시지: ${message}`);
+    this.server.on('leave-room', () => {
+      this.logger.log('leave 되었습니다.');
+    });
+    this.server.emit(`leave-room${room}`, { room, message });
+  }
 }
