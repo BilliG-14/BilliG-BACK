@@ -25,6 +25,7 @@ async function bootstrap() {
       'https://billig-v3.vercel.app',
       'http://kdt-sw3-team14.elicecoding.com',
       'https://kdt-sw3-team14.elicecoding.com',
+      'https://billig-front.vercel.app/',
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
