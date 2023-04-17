@@ -81,13 +81,13 @@ export class UserController {
     FileInterceptor('image', {
       storage: multerS3({
         s3: new S3Client({
-          region: 'ap-northeast-2',
-          // credentials: {
-          //   accessKeyId: 'AKIAY5IXVITKPDRY6G4T',
-          //   secretAccessKey: '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',
-          // },
+          region: process.env.AWS_BUCKET_REGION,
+          credentials: {
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+          },
         }),
-        bucket: 'billig-backend-s3-bucket',
+        bucket: process.env.AWS_S3_BUCKET_NAME,
         key(_req, file, done) {
           const ext = path.extname(file.originalname);
           const basename = path.basename(file.originalname, ext);

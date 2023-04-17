@@ -28,11 +28,11 @@ import { InputProductDTO } from './dto/inputProduct.dto';
 import * as qs from 'qs';
 
 const s3 = new S3Client({
-  region: 'ap-northeast-2', // 환경변수로 선언하면 값을 못 읽어오는 문제 있음. 왜 ?????
-  // credentials: {
-  //   accessKeyId: 'AKIAY5IXVITKPDRY6G4T', // 환경변수로 선언하면 값을 못 읽어오는 문제 있음. 왜 ?????
-  //   secretAccessKey: 'RYTV+DplWnGZJ/aTC9RXmFlYKknkr7ixri4S+yfl', // 환경변수로 선언하면 값을 못 읽어오는 문제 있음. 왜 ?????
-  // },
+  region: process.env.AWS_BUCKET_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
 });
 
 @Controller('product')
@@ -70,7 +70,7 @@ export class ProductController {
     FilesInterceptor('images', 10, {
       storage: multerS3({
         s3: s3,
-        bucket: 'billig-backend-s3-bucket',
+        bucket: process.env.AWS_S3_BUCKET_NAME,
         key(_req, file, done) {
           const ext = path.extname(file.originalname); //확장자
           const basename = path.basename(file.originalname, ext); //파일명
