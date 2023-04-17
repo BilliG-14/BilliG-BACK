@@ -15,16 +15,14 @@ import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    MongooseModule.forRoot(process.env.MONGODB_URI),
     AuthModule,
     UserModule,
     ProductModule,
     NoticeModule,
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
-    MongooseModule.forRoot(
-      process.env.MONGODB_URI ?? 'mongodb://localhost:27017',
-    ),
     CategoryModule,
     ReportModule,
     HashtagModule,

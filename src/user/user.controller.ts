@@ -22,6 +22,9 @@ import * as bcrypt from 'bcrypt';
 import JwtAuthGuard from 'src/auth/guard/jwt-auth.guard';
 import { UpdateUserDTO } from './dto/updateUser.dto';
 import { UserService } from './user.service';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 @UseGuards(JwtAuthGuard)
 @Controller('user')

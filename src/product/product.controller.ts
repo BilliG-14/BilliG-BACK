@@ -26,18 +26,17 @@ import { FindProductDTO } from './dto/findProduct.dto';
 import { parse } from 'path';
 import { InputProductDTO } from './dto/inputProduct.dto';
 import * as qs from 'qs';
+import { ConfigService } from '@nestjs/config';
+import * as dotenv from 'dotenv';
 
-const s3 = new S3Client({
-  region: process.env.AWS_BUCKET_REGION,
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  },
-});
+dotenv.config();
 
 @Controller('product')
 export class ProductController {
-  constructor(readonly productService: ProductService) {}
+  constructor(
+    readonly productService: ProductService,
+    private readonly configService: ConfigService,
+  ) {}
 
   @Get('page') // product?user=XXXX&postType=lend
   async getProductsByPage(
@@ -69,7 +68,13 @@ export class ProductController {
   @UseInterceptors(
     FilesInterceptor('images', 10, {
       storage: multerS3({
-        s3: s3,
+        s3: new S3Client({
+          region: process.env.AWS_BUCKET_REGION,
+          credentials: {
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+          },
+        }),
         bucket: process.env.AWS_S3_BUCKET_NAME,
         key(_req, file, done) {
           const ext = path.extname(file.originalname); //확장자
