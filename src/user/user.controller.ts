@@ -82,12 +82,12 @@ export class UserController {
       storage: multerS3({
         s3: new S3Client({
           region: 'ap-northeast-2',
-          credentials: {
-            accessKeyId: 'AKIAY5IXVITKPDRY6G4T',
-            secretAccessKey: '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',
-          },
+          // credentials: {
+          //   accessKeyId: 'AKIAY5IXVITKPDRY6G4T',
+          //   secretAccessKey: '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',
+          // },
         }),
-        bucket: 'billige',
+        bucket: 'billig-backend-s3-bucket',
         key(_req, file, done) {
           const ext = path.extname(file.originalname);
           const basename = path.basename(file.originalname, ext);
