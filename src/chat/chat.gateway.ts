@@ -16,12 +16,8 @@ import { Chat, ChatDocument } from './schemas/chat.schema';
   transports: ['websocket', 'polling'],
   cors: {
     origin: [
-      'http://localhost:3000',
-      'https://billig.vercel.app',
-      'https://billig-v3.vercel.app',
-      'http://kdt-sw3-team14.elicecoding.com',
-      'https://kdt-sw3-team14.elicecoding.com',
-      'https://billig-front.vercel.app',
+      // 'http://localhost:3000',
+      // 'https://billig-front.vercel.app',
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
